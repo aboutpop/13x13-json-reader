@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>13×13 Pixel Animation Studio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+  .pixel-cell { transition: background-color 0.05s; border: 1px solid rgba(255,255,255,0.15); box-sizing: border-box; }
+  .pixel-cell:hover { outline: 2px solid rgba(255,255,255,0.5); outline-offset: -2px; z-index: 1; position: relative; }
+  .pixel-cell.template-black { background: #000000 !important; }
+  .pixel-cell.template-red { background: #dc2626 !important; }
+  .pixel-cell.template-black:hover, .pixel-cell.template-red:hover { outline-color: #fbbf24; }
+  .frame-thumb { transition: all 0.15s; }
+  .frame-thumb:hover { transform: translateY(-2px); }
+  .frame-thumb.active { outline: 2px solid #38bdf8; outline-offset: 2px; }
+  .tool-btn.active { background: #38bdf8; color: #0f172a; }
+  .swatch { width: 28px; height: 28px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+  .swatch.active { border-color: #fff; transform: scale(1.1); }
+  .canvas-bg {
+    background-color: #000000;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+  }
+  .scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
+  .scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+  .scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+  .glow { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+  .palette-group-label { font-size: 10px; color: #94a3b8; margin-top: 6px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="max-w-7xl mx-auto p-4">
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-4 pb-4 border-b border-slate-700">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-purple-500 flex items-center justify-center font-bold text-lg">Px</div>
+      <div>
+        <h1 class="text-xl font-bold">13×13 Pixel Animation Studio</h1>
+        <p class="text-xs text-slate-400">สร้างอนิเมชั่นพิกเซลอาร์ตแบบเฟรมต่อเฟรม</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button id="btnImport" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-medium transition">📥 Import JSON</button>
+      <button id="btnExport" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-900 rounded-lg text-sm font-bold transition glow">📤 Export JSON</button>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-12 gap-4">
+    <!-- Left: Tools & Colors -->
+    <aside class="col-span-2 space-y-4">
+      <!-- Tools -->
+      <div class="bg-slate-800 rounded-xl p-3">
+        <h3 class="text-xs uppercase text-slate-400 mb-2 font-semibold">เครื่องมือ</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="tool-btn active p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-tool="pencil" title="ดินสอ (P)">✏️</button>
+          <button class="tool-btn p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-tool="eraser" title="ยางลบ (E)">
+            <span style="color:#ef4444;font-weight:bold;">✕</span>
+          </button>
+          <button class="tool-btn p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-tool="fill" title="เติมสี (F)">
+            <span style="display:inline-block;width:14px;height:14px;background:#38bdf8;border-radius:2px;vertical-align:middle;"></span>
+          </button>
+          <button class="tool-btn p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-tool="picker" title="ดูดสี (I)"></button>
+        </div>
+      </div>
+
+      <!-- Current Color -->
+      <div class="bg-slate-800 rounded-xl p-3">
+        <h3 class="text-xs uppercase text-slate-400 mb-2 font-semibold">สีปัจจุบัน</h3>
+        <div class="flex items-center gap-2 mb-2">
+          <div id="currentColorPreview" class="w-12 h-12 rounded-lg border-2 border-slate-600" style="background:#ffffff"></div>
+          <input type="color" id="colorPicker" value="#ffffff" class="w-full h-12 rounded cursor-pointer bg-transparent">
+        </div>
+        <input type="text" id="hexInput" value="#ffffff" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-xs font-mono">
+      </div>
+
+      <!-- Palette -->
+      <div class="bg-slate-800 rounded-xl p-3">
+        <h3 class="text-xs uppercase text-slate-400 mb-2 font-semibold">จานสี</h3>
+        <div class="palette-group-label">ขาว-เทา-ดำ</div>
+        <div id="paletteGrayscale" class="grid grid-cols-6 gap-1"></div>
+        <div class="palette-group-label" style="margin-top:10px;">สี</div>
+        <div id="paletteColors" class="grid grid-cols-5 gap-1"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="bg-slate-800 rounded-xl p-3 space-y-2">
+        <button id="btnClear" class="w-full py-2 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-lg text-sm">️ ล้างเฟรม</button>
+        <button id="btnUndo" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm">↶ Undo (Ctrl+Z)</button>
+        <button id="btnRedo" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm">↷ Redo (Ctrl+Y)</button>
+      </div>
+    </aside>
+
+    <!-- Center: Canvas -->
+    <main class="col-span-7">
+      <div class="bg-slate-800 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-slate-400">เฟรมที่</span>
+            <span id="currentFrameLabel" class="font-mono font-bold text-sky-400">1 / 1</span>
+          </div>
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" id="onionSkin" class="accent-sky-400">
+            <span class="text-slate-300">Onion Skin</span>
+          </label>
+        </div>
+        <div class="flex justify-center">
+          <div id="canvas" class="canvas-bg rounded-lg inline-block border-2 border-slate-600"></div>
+        </div>
+        <p class="text-xs text-slate-500 text-center mt-3">คลิกหรือลากเพื่อวาด • ขวาคลิกเพื่อลบ • ขนาด 13×13 พิกเซล</p>
+      </div>
+
+      <!-- Preview -->
+      <div class="bg-slate-800 rounded-xl p-4 mt-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold">🎬 Preview</h3>
+          <div class="flex items-center gap-3">
+            <button id="btnPlay" class="px-3 py-1 bg-green-500 hover:bg-green-400 text-slate-900 rounded-lg text-sm font-bold">▶ เล่น</button>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400">FPS:</span>
+              <input type="range" id="fpsSlider" min="1" max="30" value="8" class="w-24 accent-sky-400">
+              <span id="fpsValue" class="text-xs font-mono text-sky-400 w-6">8</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div class="rounded-lg p-2 inline-block border border-slate-600" style="background:#000;">
+            <canvas id="previewCanvas" width="260" height="260" class="rounded"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right: Frames -->
+    <aside class="col-span-3">
+      <div class="bg-slate-800 rounded-xl p-3 h-full">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold">🎞️ เฟรมทั้งหมด</h3>
+          <span id="frameCount" class="text-xs text-slate-400">1 เฟรม</span>
+        </div>
+        <div class="flex gap-2 mb-3">
+          <button id="btnAddFrame" class="flex-1 py-2 bg-sky-500 hover:bg-sky-400 text-slate-900 rounded-lg text-sm font-bold">+ เพิ่มเฟรม</button>
+          <button id="btnDuplicate" class="py-2 px-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm" title="คัดลอกเฟรม">📋</button>
+          <button id="btnDeleteFrame" class="py-2 px-3 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-lg text-sm" title="ลบเฟรม">🗑</button>
+        </div>
+        <button id="btnToggleTemplate" class="w-full py-2 mb-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white rounded-lg text-sm font-bold">⭕ แสดงเทมเพลตวงกลม</button>
+        <div id="framesList" class="space-y-2 max-h-[600px] overflow-y-auto scrollbar pr-1"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- JSON Modal -->
+<div id="jsonModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+  <div class="bg-slate-800 rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between p-4 border-b border-slate-700">
+      <h3 id="modalTitle" class="font-bold text-lg">JSON Output</h3>
+      <button id="btnCloseModal" class="text-2xl text-slate-400 hover:text-white">×</button>
+    </div>
+    <div class="p-4 overflow-auto flex-1">
+      <textarea id="jsonOutput" class="w-full h-96 bg-slate-900 border border-slate-600 rounded-lg p-3 font-mono text-xs text-green-300 resize-none"></textarea>
+    </div>
+    <div class="p-4 border-t border-slate-700 flex gap-2 justify-end">
+      <button id="btnCopyJson" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-900 rounded-lg text-sm font-bold">📋 คัดลอก</button>
+      <button id="btnDownloadJson" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-slate-900 rounded-lg text-sm font-bold">💾 ดาวน์โหลด</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".json" class="hidden">
+
+<script>
+const GRID_SIZE = 13;
+const CELL_SIZE = 32;
+
+// เฉดขาว-เทา-ดำ 12 ระดับ
+const PALETTE_GRAYSCALE = [
+  '#ffffff', '#ebebeb', '#d6d6d6', '#c2c2c2',
+  '#adadad', '#999999', '#858585', '#707070',
+  '#5c5c5c', '#474747', '#333333', '#000000'
+];
+
+// สีอื่นๆ
+const PALETTE_COLORS = [
+  '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c',
+  '#00a2e8', '#3f48cc', '#a349a4', '#b97a57', '#ffaec9',
+  '#ffc90e', '#efe4b0', '#b5e61d', '#99d9ea', '#7092be',
+  '#c8bfe7', '#1a1a1a', '#4a148c', '#004d40', '#bf360c'
+];
+
+// State
+let frames = [createEmptyFrame()];
+let currentFrameIndex = 0;
+let currentColor = '#ffffff'; // default เป็นสีขาว
+let currentTool = 'pencil';
+let isDrawing = false;
+let fps = 8;
+let isPlaying = false;
+let playInterval = null;
+let history = [[]];
+let historyIndex = [0];
+let showCircleTemplate = false;
+
+function createEmptyFrame() {
+  return Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+}
+
+function cloneFrame(frame) {
+  return frame.map(row => [...row]);
+}
+
+function isInCircle(x, y) {
+  if (y >= 4 && y <= 8) return true;
+  if (y === 0 || y === 12) return x >= 4 && x <= 8;
+  if (y === 1 || y === 11) return x >= 2 && x <= 10;
+  if (y === 2 || y === 3 || y === 9 || y === 10) return x >= 1 && x <= 11;
+  return false;
+}
+
+// Build canvas
+const canvasEl = document.getElementById('canvas');
+canvasEl.style.display = 'grid';
+canvasEl.style.gridTemplateColumns = `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`;
+canvasEl.style.gridTemplateRows = `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`;
+canvasEl.style.gap = '0px';
+
+const cells = [];
+for (let y = 0; y < GRID_SIZE; y++) {
+  for (let x = 0; x < GRID_SIZE; x++) {
+    const cell = document.createElement('div');
+    cell.className = 'pixel-cell';
+    cell.style.width = CELL_SIZE + 'px';
+    cell.style.height = CELL_SIZE + 'px';
+    cell.style.background = 'transparent';
+    cell.dataset.x = x;
+    cell.dataset.y = y;
+    canvasEl.appendChild(cell);
+    cells.push(cell);
+
+    cell.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isDrawing = true;
+      handleCellAction(x, y, e.button);
+    });
+    cell.addEventListener('mouseenter', () => {
+      if (isDrawing) handleCellAction(x, y);
+    });
+    cell.addEventListener('contextmenu', e => e.preventDefault());
+  }
+}
+
+document.addEventListener('mouseup', () => {
+  if (isDrawing) {
+    isDrawing = false;
+    pushHistory();
+  }
+});
+
+function handleCellAction(x, y, button) {
+  const frame = frames[currentFrameIndex];
+  if (currentTool === 'pencil') {
+    const color = button === 2 ? null : currentColor;
+    if (frame[y][x] !== color) {
+      frame[y][x] = color;
+      renderCanvas();
+      renderFramesList();
+      updatePreview();
+    }
+  } else if (currentTool === 'eraser') {
+    if (frame[y][x] !== null) {
+      frame[y][x] = null;
+      renderCanvas();
+      renderFramesList();
+      updatePreview();
+    }
+  } else if (currentTool === 'fill') {
+    floodFill(x, y, currentColor);
+    renderCanvas();
+    renderFramesList();
+    updatePreview();
+  } else if (currentTool === 'picker') {
+    const c = frame[y][x];
+    if (c) {
+      currentColor = c;
+      updateColorUI();
+    }
+  }
+}
+
+function floodFill(x, y, newColor) {
+  const frame = frames[currentFrameIndex];
+  const target = frame[y][x];
+  if (target === newColor) return;
+  const stack = [[x, y]];
+  while (stack.length) {
+    const [cx, cy] = stack.pop();
+    if (cx < 0 || cx >= GRID_SIZE || cy < 0 || cy >= GRID_SIZE) continue;
+    if (frame[cy][cx] !== target) continue;
+    frame[cy][cx] = newColor;
+    stack.push([cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]);
+  }
+}
+
+function renderCanvas() {
+  const frame = frames[currentFrameIndex];
+  const onion = document.getElementById('onionSkin').checked && currentFrameIndex > 0;
+  const prevFrame = onion ? frames[currentFrameIndex - 1] : null;
+  cells.forEach((cell, i) => {
+    const x = i % GRID_SIZE;
+    const y = Math.floor(i / GRID_SIZE);
+    const color = frame[y][x];
+    cell.classList.remove('template-black', 'template-red');
+    if (color) {
+      cell.style.background = color;
+      cell.style.opacity = '1';
+    } else if (onion && prevFrame && prevFrame[y][x]) {
+      cell.style.background = prevFrame[y][x];
+      cell.style.opacity = '0.25';
+    } else if (showCircleTemplate) {
+      if (isInCircle(x, y)) {
+        cell.classList.add('template-black');
+        cell.style.background = '';
+        cell.style.opacity = '1';
+      } else {
+        cell.classList.add('template-red');
+        cell.style.background = '';
+        cell.style.opacity = '1';
+      }
+    } else {
+      cell.style.background = 'transparent';
+      cell.style.opacity = '1';
+    }
+  });
+}
+
+const previewCanvas = document.getElementById('previewCanvas');
+const pctx = previewCanvas.getContext('2d');
+const PREVIEW_CELL = 20;
+
+function drawFrameToPreview(ctx, frame, size) {
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, size, size);
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      const c = frame[y][x];
+      if (c) {
+        ctx.fillStyle = c;
+        ctx.fillRect(x * PREVIEW_CELL, y * PREVIEW_CELL, PREVIEW_CELL, PREVIEW_CELL);
+      }
+    }
+  }
+}
+
+function updatePreview() {
+  drawFrameToPreview(pctx, frames[currentFrameIndex], 260);
+}
+
+const framesList = document.getElementById('framesList');
+
+function renderFramesList() {
+  framesList.innerHTML = '';
+  frames.forEach((frame, idx) => {
+    const div = document.createElement('div');
+    div.className = `frame-thumb flex items-center gap-2 p-2 rounded-lg cursor-pointer ${idx === currentFrameIndex ? 'active bg-slate-700' : 'bg-slate-900 hover:bg-slate-700'}`;
+    const canvas = document.createElement('canvas');
+    canvas.width = 52;
+    canvas.height = 52;
+    canvas.className = 'rounded';
+    const c = canvas.getContext('2d');
+    c.fillStyle = '#000000';
+    c.fillRect(0,0,52,52);
+    const cs = 4;
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        if (frame[y][x]) {
+          c.fillStyle = frame[y][x];
+          c.fillRect(x*cs, y*cs, cs, cs);
+        }
+      }
+    }
+    const label = document.createElement('span');
+    label.className = 'text-sm font-mono flex-1';
+    label.textContent = `#${idx + 1}`;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'text-slate-500 hover:text-red-400 text-xs';
+    delBtn.textContent = '×';
+    delBtn.onclick = (e) => { e.stopPropagation(); deleteFrame(idx); };
+    div.appendChild(canvas);
+    div.appendChild(label);
+    if (frames.length > 1) div.appendChild(delBtn);
+    div.onclick = () => selectFrame(idx);
+    framesList.appendChild(div);
+  });
+  document.getElementById('currentFrameLabel').textContent = `${currentFrameIndex + 1} / ${frames.length}`;
+  document.getElementById('frameCount').textContent = `${frames.length} เฟรม`;
+}
+
+function selectFrame(idx) {
+  currentFrameIndex = idx;
+  renderCanvas();
+  renderFramesList();
+  updatePreview();
+}
+
+function addFrame() {
+  frames.splice(currentFrameIndex + 1, 0, createEmptyFrame());
+  history.splice(currentFrameIndex + 1, 0, []);
+  historyIndex.splice(currentFrameIndex + 1, 0, 0);
+  currentFrameIndex++;
+  renderCanvas();
+  renderFramesList();
+  updatePreview();
+}
+
+function duplicateFrame() {
+  frames.splice(currentFrameIndex + 1, 0, cloneFrame(frames[currentFrameIndex]));
+  history.splice(currentFrameIndex + 1, 0, []);
+  historyIndex.splice(currentFrameIndex + 1, 0, 0);
+  currentFrameIndex++;
+  renderCanvas();
+  renderFramesList();
+  updatePreview();
+}
+
+function deleteFrame(idx) {
+  if (frames.length <= 1) return;
+  frames.splice(idx, 1);
+  history.splice(idx, 1);
+  historyIndex.splice(idx, 1);
+  if (currentFrameIndex >= frames.length) currentFrameIndex = frames.length - 1;
+  renderCanvas();
+  renderFramesList();
+  updatePreview();
+}
+
+function pushHistory() {
+  const h = history[currentFrameIndex];
+  const i = historyIndex[currentFrameIndex];
+  h.length = i;
+  h.push(cloneFrame(frames[currentFrameIndex]));
+  historyIndex[currentFrameIndex] = h.length;
+}
+
+function undo() {
+  const i = historyIndex[currentFrameIndex];
+  if (i > 0) {
+    historyIndex[currentFrameIndex] = i - 1;
+    frames[currentFrameIndex] = cloneFrame(history[currentFrameIndex][i - 1]);
+    renderCanvas();
+    renderFramesList();
+    updatePreview();
+  }
+}
+
+function redo() {
+  const h = history[currentFrameIndex];
+  const i = historyIndex[currentFrameIndex];
+  if (i < h.length) {
+    historyIndex[currentFrameIndex] = i + 1;
+    frames[currentFrameIndex] = cloneFrame(h[i]);
+    renderCanvas();
+    renderFramesList();
+    updatePreview();
+  }
+}
+
+document.querySelectorAll('.tool-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTool = btn.dataset.tool;
+  };
+});
+
+const colorPicker = document.getElementById('colorPicker');
+const hexInput = document.getElementById('hexInput');
+const currentColorPreview = document.getElementById('currentColorPreview');
+
+function updateColorUI() {
+  colorPicker.value = currentColor;
+  hexInput.value = currentColor;
+  currentColorPreview.style.background = currentColor;
+  document.querySelectorAll('.swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.color.toLowerCase() === currentColor.toLowerCase());
+  });
+}
+
+colorPicker.oninput = () => { currentColor = colorPicker.value; updateColorUI(); };
+hexInput.onchange = () => {
+  const v = hexInput.value.trim();
+  if (/^#[0-9a-f]{6}$/i.test(v)) { currentColor = v; updateColorUI(); }
+};
+
+// สร้างจานสีแยกกลุ่ม
+const paletteGrayEl = document.getElementById('paletteGrayscale');
+const paletteColorEl = document.getElementById('paletteColors');
+
+PALETTE_GRAYSCALE.forEach(c => {
+  const s = document.createElement('div');
+  s.className = 'swatch';
+  s.style.background = c;
+  s.dataset.color = c;
+  s.onclick = () => { currentColor = c; updateColorUI(); };
+  paletteGrayEl.appendChild(s);
+});
+
+PALETTE_COLORS.forEach(c => {
+  const s = document.createElement('div');
+  s.className = 'swatch';
+  s.style.background = c;
+  s.dataset.color = c;
+  s.onclick = () => { currentColor = c; updateColorUI(); };
+  paletteColorEl.appendChild(s);
+});
+
+updateColorUI();
+
+const btnToggleTemplate = document.getElementById('btnToggleTemplate');
+btnToggleTemplate.onclick = () => {
+  showCircleTemplate = !showCircleTemplate;
+  btnToggleTemplate.textContent = showCircleTemplate ? ' ซ่อนเทมเพลตวงกลม' : '⭕ แสดงเทมเพลตวงกลม';
+  renderCanvas();
+};
+
+document.getElementById('btnAddFrame').onclick = addFrame;
+document.getElementById('btnDuplicate').onclick = duplicateFrame;
+document.getElementById('btnDeleteFrame').onclick = () => deleteFrame(currentFrameIndex);
+document.getElementById('btnClear').onclick = () => {
+  frames[currentFrameIndex] = createEmptyFrame();
+  pushHistory();
+  renderCanvas();
+  renderFramesList();
+  updatePreview();
+};
+document.getElementById('btnUndo').onclick = undo;
+document.getElementById('btnRedo').onclick = redo;
+document.getElementById('onionSkin').onchange = renderCanvas;
+
+const fpsSlider = document.getElementById('fpsSlider');
+const fpsValue = document.getElementById('fpsValue');
+fpsSlider.oninput = () => {
+  fps = parseInt(fpsSlider.value);
+  fpsValue.textContent = fps;
+  if (isPlaying) { stopPlay(); startPlay(); }
+};
+
+const btnPlay = document.getElementById('btnPlay');
+function startPlay() {
+  if (frames.length < 2) return;
+  isPlaying = true;
+  btnPlay.textContent = '⏸ หยุด';
+  btnPlay.classList.remove('bg-green-500','hover:bg-green-400');
+  btnPlay.classList.add('bg-yellow-500','hover:bg-yellow-400');
+  let idx = 0;
+  playInterval = setInterval(() => {
+    drawFrameToPreview(pctx, frames[idx], 260);
+    idx = (idx + 1) % frames.length;
+  }, 1000 / fps);
+}
+function stopPlay() {
+  isPlaying = false;
+  clearInterval(playInterval);
+  btnPlay.textContent = '▶ เล่น';
+  btnPlay.classList.remove('bg-yellow-500','hover:bg-yellow-400');
+  btnPlay.classList.add('bg-green-500','hover:bg-green-400');
+  updatePreview();
+}
+btnPlay.onclick = () => isPlaying ? stopPlay() : startPlay();
+
+// Export JSON - ตัดข้อมูลที่ไม่จำเป็นออก
+function buildJSON() {
+  return {
+    width: GRID_SIZE,
+    height: GRID_SIZE,
+    fps: fps,
+    frames: frames.map(frame => {
+      const pixels = [];
+      for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+          if (frame[y][x]) {
+            pixels.push({ x, y, color: frame[y][x] });
+          }
+        }
+      }
+      return pixels;
+    })
+  };
+}
+
+const jsonModal = document.getElementById('jsonModal');
+const jsonOutput = document.getElementById('jsonOutput');
+const modalTitle = document.getElementById('modalTitle');
+
+document.getElementById('btnExport').onclick = () => {
+  const data = buildJSON();
+  jsonOutput.value = JSON.stringify(data, null, 2);
+  modalTitle.textContent = ` Export JSON (${frames.length} เฟรม)`;
+  jsonModal.classList.remove('hidden');
+  jsonModal.classList.add('flex');
+};
+
+document.getElementById('btnCloseModal').onclick = () => {
+  jsonModal.classList.add('hidden');
+  jsonModal.classList.remove('flex');
+};
+
+document.getElementById('btnCopyJson').onclick = async () => {
+  await navigator.clipboard.writeText(jsonOutput.value);
+  const btn = document.getElementById('btnCopyJson');
+  const orig = btn.textContent;
+  btn.textContent = '✓ คัดลอกแล้ว!';
+  setTimeout(() => btn.textContent = orig, 1500);
+};
+
+document.getElementById('btnDownloadJson').onclick = () => {
+  const blob = new Blob([jsonOutput.value], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pixel-animation-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById('btnImport').onclick = () => document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.frames || !Array.isArray(data.frames)) throw new Error('Invalid format');
+      frames = data.frames.map(f => {
+        const frame = createEmptyFrame();
+        const pixels = Array.isArray(f) ? f : (f.pixels || []);
+        pixels.forEach(p => {
+          if (p.x >= 0 && p.x < GRID_SIZE && p.y >= 0 && p.y < GRID_SIZE) {
+            frame[p.y][p.x] = p.color;
+          }
+        });
+        return frame;
+      });
+      if (frames.length === 0) frames = [createEmptyFrame()];
+      history = frames.map(() => []);
+      historyIndex = frames.map(() => 0);
+      if (data.fps) { fps = data.fps; fpsSlider.value = fps; fpsValue.textContent = fps; }
+      currentFrameIndex = 0;
+      renderCanvas();
+      renderFramesList();
+      updatePreview();
+      alert(`✓ โหลดสำเร็จ: ${frames.length} เฟรม`);
+    } catch (err) {
+      alert('❌ ไฟล์ JSON ไม่ถูกต้อง: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'z') { e.preventDefault(); undo(); }
+    else if (e.key === 'y') { e.preventDefault(); redo(); }
+  } else {
+    if (e.key === 'p') document.querySelector('[data-tool="pencil"]').click();
+    else if (e.key === 'e') document.querySelector('[data-tool="eraser"]').click();
+    else if (e.key === 'f') document.querySelector('[data-tool="fill"]').click();
+    else if (e.key === 'i') document.querySelector('[data-tool="picker"]').click();
+    else if (e.key === 't') { e.preventDefault(); btnToggleTemplate.click(); }
+    else if (e.key === ' ') { e.preventDefault(); btnPlay.click(); }
+  }
+});
+
+pushHistory();
+renderCanvas();
+renderFramesList();
+updatePreview();
+</script>
+</body>
+</html>
+
