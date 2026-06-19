@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>13×13 Pixel Animation Studio</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
 <style>
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
   .pixel-cell { transition: background-color 0.05s; border: 1px solid rgba(255,255,255,0.15); box-sizing: border-box; }
@@ -29,7 +30,9 @@
   .scrollbar::-webkit-scrollbar-track { background: #1e293b; }
   .scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
   .glow { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+  .glow-gif { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
   .palette-group-label { font-size: 10px; color: #94a3b8; margin-top: 6px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .progress-bar { transition: width 0.2s; }
 </style>
 </head>
 <body class="min-h-screen">
@@ -47,6 +50,7 @@
     <div class="flex gap-2">
       <button id="btnImport" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-medium transition">📥 Import JSON</button>
       <button id="btnExport" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-900 rounded-lg text-sm font-bold transition glow">📤 Export JSON</button>
+      <button id="btnExportGif" class="px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-lg text-sm font-bold transition glow-gif">🎞️ Export GIF</button>
     </div>
   </header>
 
@@ -89,7 +93,7 @@
 
       <!-- Actions -->
       <div class="bg-slate-800 rounded-xl p-3 space-y-2">
-        <button id="btnClear" class="w-full py-2 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-lg text-sm">️ ล้างเฟรม</button>
+        <button id="btnClear" class="w-full py-2 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-lg text-sm">🗑️ ล้างเฟรม</button>
         <button id="btnUndo" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm">↶ Undo (Ctrl+Z)</button>
         <button id="btnRedo" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm">↷ Redo (Ctrl+Y)</button>
       </div>
@@ -117,7 +121,7 @@
       <!-- Preview -->
       <div class="bg-slate-800 rounded-xl p-4 mt-4">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-semibold">🎬 Preview</h3>
+          <h3 class="text-sm font-semibold"> Preview</h3>
           <div class="flex items-center gap-3">
             <button id="btnPlay" class="px-3 py-1 bg-green-500 hover:bg-green-400 text-slate-900 rounded-lg text-sm font-bold">▶ เล่น</button>
             <div class="flex items-center gap-2">
@@ -129,7 +133,7 @@
         </div>
         <div class="flex justify-center">
           <div class="rounded-lg p-2 inline-block border border-slate-600" style="background:#000;">
-            <canvas id="previewCanvas" width="260" height="260" class="rounded"></canvas>
+            <canvas id="previewCanvas" width="260" height="260" class="rounded" style="image-rendering: pixelated;"></canvas>
           </div>
         </div>
       </div>
@@ -147,7 +151,7 @@
           <button id="btnDuplicate" class="py-2 px-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm" title="คัดลอกเฟรม">📋</button>
           <button id="btnDeleteFrame" class="py-2 px-3 bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-lg text-sm" title="ลบเฟรม">🗑</button>
         </div>
-        <button id="btnToggleTemplate" class="w-full py-2 mb-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white rounded-lg text-sm font-bold">⭕ แสดงเทมเพลตวงกลม</button>
+        <button id="btnToggleTemplate" class="w-full py-2 mb-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white rounded-lg text-sm font-bold"> แสดงเทมเพลตวงกลม</button>
         <div id="framesList" class="space-y-2 max-h-[600px] overflow-y-auto scrollbar pr-1"></div>
       </div>
     </aside>
@@ -165,8 +169,37 @@
       <textarea id="jsonOutput" class="w-full h-96 bg-slate-900 border border-slate-600 rounded-lg p-3 font-mono text-xs text-green-300 resize-none"></textarea>
     </div>
     <div class="p-4 border-t border-slate-700 flex gap-2 justify-end">
-      <button id="btnCopyJson" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-900 rounded-lg text-sm font-bold">📋 คัดลอก</button>
+      <button id="btnCopyJson" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-900 rounded-lg text-sm font-bold"> คัดลอก</button>
       <button id="btnDownloadJson" class="px-4 py-2 bg-green-500 hover:bg-green-400 text-slate-900 rounded-lg text-sm font-bold">💾 ดาวน์โหลด</button>
+    </div>
+  </div>
+</div>
+
+<!-- GIF Progress Modal -->
+<div id="gifModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+  <div class="bg-slate-800 rounded-xl max-w-md w-full flex flex-col">
+    <div class="flex items-center justify-between p-4 border-b border-slate-700">
+      <h3 class="font-bold text-lg">🎞️ กำลังสร้าง GIF...</h3>
+      <button id="btnCloseGifModal" class="text-2xl text-slate-400 hover:text-white">×</button>
+    </div>
+    <div class="p-6">
+      <div class="mb-4">
+        <div class="flex justify-between text-sm mb-2">
+          <span id="gifStatus">กำลังเตรียมเฟรม...</span>
+          <span id="gifPercent" class="font-mono text-purple-400">0%</span>
+        </div>
+        <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
+          <div id="gifProgressBar" class="progress-bar h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+      <div id="gifPreview" class="hidden flex justify-center">
+        <div class="rounded-lg p-2 border border-slate-600" style="background:#000;">
+          <img id="gifResult" class="rounded" style="image-rendering: pixelated; width: 260px; height: 260px;">
+        </div>
+      </div>
+    </div>
+    <div id="gifActions" class="hidden p-4 border-t border-slate-700 flex gap-2 justify-end">
+      <button id="btnDownloadGif" class="px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-lg text-sm font-bold glow-gif">💾 ดาวน์โหลด GIF</button>
     </div>
   </div>
 </div>
@@ -177,14 +210,12 @@
 const GRID_SIZE = 13;
 const CELL_SIZE = 32;
 
-// เฉดขาว-เทา-ดำ 12 ระดับ
 const PALETTE_GRAYSCALE = [
   '#ffffff', '#ebebeb', '#d6d6d6', '#c2c2c2',
   '#adadad', '#999999', '#858585', '#707070',
   '#5c5c5c', '#474747', '#333333', '#000000'
 ];
 
-// สีอื่นๆ
 const PALETTE_COLORS = [
   '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c',
   '#00a2e8', '#3f48cc', '#a349a4', '#b97a57', '#ffaec9',
@@ -192,10 +223,9 @@ const PALETTE_COLORS = [
   '#c8bfe7', '#1a1a1a', '#4a148c', '#004d40', '#bf360c'
 ];
 
-// State
 let frames = [createEmptyFrame()];
 let currentFrameIndex = 0;
-let currentColor = '#ffffff'; // default เป็นสีขาว
+let currentColor = '#ffffff';
 let currentTool = 'pencil';
 let isDrawing = false;
 let fps = 8;
@@ -204,6 +234,7 @@ let playInterval = null;
 let history = [[]];
 let historyIndex = [0];
 let showCircleTemplate = false;
+let gifDataUrl = null;
 
 function createEmptyFrame() {
   return Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
@@ -221,7 +252,6 @@ function isInCircle(x, y) {
   return false;
 }
 
-// Build canvas
 const canvasEl = document.getElementById('canvas');
 canvasEl.style.display = 'grid';
 canvasEl.style.gridTemplateColumns = `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`;
@@ -495,7 +525,6 @@ hexInput.onchange = () => {
   if (/^#[0-9a-f]{6}$/i.test(v)) { currentColor = v; updateColorUI(); }
 };
 
-// สร้างจานสีแยกกลุ่ม
 const paletteGrayEl = document.getElementById('paletteGrayscale');
 const paletteColorEl = document.getElementById('paletteColors');
 
@@ -522,7 +551,7 @@ updateColorUI();
 const btnToggleTemplate = document.getElementById('btnToggleTemplate');
 btnToggleTemplate.onclick = () => {
   showCircleTemplate = !showCircleTemplate;
-  btnToggleTemplate.textContent = showCircleTemplate ? ' ซ่อนเทมเพลตวงกลม' : '⭕ แสดงเทมเพลตวงกลม';
+  btnToggleTemplate.textContent = showCircleTemplate ? '🔴 ซ่อนเทมเพลตวงกลม' : '⭕ แสดงเทมเพลตวงกลม';
   renderCanvas();
 };
 
@@ -552,7 +581,7 @@ const btnPlay = document.getElementById('btnPlay');
 function startPlay() {
   if (frames.length < 2) return;
   isPlaying = true;
-  btnPlay.textContent = '⏸ หยุด';
+  btnPlay.textContent = ' หยุด';
   btnPlay.classList.remove('bg-green-500','hover:bg-green-400');
   btnPlay.classList.add('bg-yellow-500','hover:bg-yellow-400');
   let idx = 0;
@@ -571,7 +600,7 @@ function stopPlay() {
 }
 btnPlay.onclick = () => isPlaying ? stopPlay() : startPlay();
 
-// Export JSON - ตัดข้อมูลที่ไม่จำเป็นออก
+// Export JSON
 function buildJSON() {
   return {
     width: GRID_SIZE,
@@ -598,7 +627,7 @@ const modalTitle = document.getElementById('modalTitle');
 document.getElementById('btnExport').onclick = () => {
   const data = buildJSON();
   jsonOutput.value = JSON.stringify(data, null, 2);
-  modalTitle.textContent = ` Export JSON (${frames.length} เฟรม)`;
+  modalTitle.textContent = `📤 Export JSON (${frames.length} เฟรม)`;
   jsonModal.classList.remove('hidden');
   jsonModal.classList.add('flex');
 };
@@ -626,6 +655,119 @@ document.getElementById('btnDownloadJson').onclick = () => {
   URL.revokeObjectURL(url);
 };
 
+// Export GIF
+const gifModal = document.getElementById('gifModal');
+const gifStatus = document.getElementById('gifStatus');
+const gifPercent = document.getElementById('gifPercent');
+const gifProgressBar = document.getElementById('gifProgressBar');
+const gifPreview = document.getElementById('gifPreview');
+const gifResult = document.getElementById('gifResult');
+const gifActions = document.getElementById('gifActions');
+
+document.getElementById('btnExportGif').onclick = () => {
+  if (frames.length < 2) {
+    alert('⚠️ ต้องมีอย่างน้อย 2 เฟรมจึงจะสร้าง GIF ได้');
+    return;
+  }
+  gifDataUrl = null;
+  gifPreview.classList.add('hidden');
+  gifActions.classList.add('hidden');
+  gifModal.classList.remove('hidden');
+  gifModal.classList.add('flex');
+  generateGif();
+};
+
+document.getElementById('btnCloseGifModal').onclick = () => {
+  gifModal.classList.add('hidden');
+  gifModal.classList.remove('flex');
+};
+
+document.getElementById('btnDownloadGif').onclick = () => {
+  if (!gifDataUrl) return;
+  const a = document.createElement('a');
+  a.href = gifDataUrl;
+  a.download = `pixel-animation-${Date.now()}.gif`;
+  a.click();
+};
+
+function generateGif() {
+  gifStatus.textContent = 'กำลังเตรียมเฟรม...';
+  gifPercent.textContent = '0%';
+  gifProgressBar.style.width = '0%';
+  
+  const GIF_SIZE = 260;
+  const CELL = GIF_SIZE / GRID_SIZE;
+  
+  // สร้าง canvas สำหรับแต่ละเฟรม
+  const frameImages = [];
+  frames.forEach((frame, idx) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = GIF_SIZE;
+    canvas.height = GIF_SIZE;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, GIF_SIZE, GIF_SIZE);
+    
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const c = frame[y][x];
+        if (c) {
+          ctx.fillStyle = c;
+          ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+        }
+      }
+    }
+    frameImages.push(canvas.toDataURL('image/png'));
+  });
+  
+  gifStatus.textContent = 'กำลังสร้าง GIF...';
+  
+  const interval = 1 / fps;
+  
+  gifshot.createGIF({
+    images: frameImages,
+    gifWidth: GIF_SIZE,
+    gifHeight: GIF_SIZE,
+    interval: interval,
+    numFrames: frameImages.length,
+    frameDuration: 1,
+    fontWeight: 'normal',
+    fontSize: '16px',
+    fontFamily: 'sans-serif',
+    fontColor: '#ffffff',
+    textAlign: 'center',
+    textBaseline: 'bottom',
+    sampleInterval: 10,
+    numWorkers: 2
+  }, function(obj) {
+    if (!obj.error) {
+      gifDataUrl = obj.image;
+      gifResult.src = gifDataUrl;
+      gifStatus.textContent = '✓ สร้าง GIF สำเร็จ!';
+      gifPercent.textContent = '100%';
+      gifProgressBar.style.width = '100%';
+      gifPreview.classList.remove('hidden');
+      gifActions.classList.remove('hidden');
+    } else {
+      gifStatus.textContent = '❌ เกิดข้อผิดพลาด: ' + obj.errorCode;
+      gifPercent.textContent = '0%';
+    }
+  });
+  
+  // Simulate progress
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 5;
+    if (progress > 95) progress = 95;
+    gifPercent.textContent = progress + '%';
+    gifProgressBar.style.width = progress + '%';
+    if (gifDataUrl) {
+      clearInterval(progressInterval);
+    }
+  }, 100);
+}
+
+// Import JSON
 document.getElementById('btnImport').onclick = () => document.getElementById('fileInput').click();
 document.getElementById('fileInput').onchange = (e) => {
   const file = e.target.files[0];
