@@ -369,6 +369,24 @@
             background: #c82333;
         }
 
+        .btn.success {
+            background: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn.success:hover {
+            background: #218838;
+        }
+
+        .btn.secondary {
+            background: #495057;
+            border-color: #495057;
+        }
+
+        .btn.secondary:hover {
+            background: #343a40;
+        }
+
         /* Frames */
         .frames-section {
             background: #1a1a1a;
@@ -520,7 +538,7 @@
             padding: 25px;
             max-width: 600px;
             width: 100%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
 
@@ -554,9 +572,15 @@
             background: #3a3a3a;
         }
 
+        .modal-subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
         .json-output {
             width: 100%;
-            min-height: 300px;
+            min-height: 280px;
             background: #0a0a0a;
             border: 1px solid #3a3a3a;
             border-radius: 8px;
@@ -568,10 +592,72 @@
             margin-bottom: 15px;
         }
 
+        .json-output::placeholder {
+            color: #555;
+        }
+
         .modal-actions {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .modal-actions-row {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .upload-zone {
+            border: 2px dashed #3a3a3a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #0f0f0f;
+        }
+
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #1a1a2e;
+        }
+
+        .upload-zone-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .upload-zone-text {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .upload-zone-hint {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 15px 0;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #3a3a3a;
         }
 
         /* GIF Modal */
@@ -624,12 +710,23 @@
             text-align: center;
             margin-top: 10px;
         }
+
+        .info-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #888;
+            margin-left: 8px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1> Round Glyph Matrix LED 13x13 for 4A pro</h1>
+            <h1>🔵 Round Glyph Matrix LED 13x13 for 4A pro</h1>
             <p>สร้างอนิเมชั่นพิกเซลอาร์ตแบบเฟรมต่อเฟรม • รองรับ JSON v4 Format (137 active pixels)</p>
         </header>
 
@@ -637,7 +734,7 @@
             <!-- LEFT COLUMN - Frames -->
             <div class="left-column">
                 <div class="frames-section">
-                    <div class="section-title">🎞️ เฟรมทั้งหมด</div>
+                    <div class="section-title">️ เฟรมทั้งหมด</div>
                     <div class="frames-list" id="framesList"></div>
                     <div class="frame-controls">
                         <button class="btn primary" id="addFrameBtn">+ เพิ่มเฟรม</button>
@@ -654,7 +751,7 @@
                         <div class="canvas-title">Canvas • คลิก/ลากเพื่อวาด • ขวาคลิกเพื่อลบ</div>
                         <div class="canvas-tools">
                             <button class="btn" id="undoBtn">↶</button>
-                            <button class="btn" id="redoBtn"></button>
+                            <button class="btn" id="redoBtn">↷</button>
                             <button class="btn danger" id="clearBtn">🗑️ ล้าง</button>
                         </div>
                     </div>
@@ -710,7 +807,7 @@
                 <div class="panel">
                     <div class="section-title">📥 Import / Export</div>
                     <div class="io-buttons">
-                        <button class="btn primary" id="importBtn">📥 Import JSON</button>
+                        <button class="btn primary" id="importBtn">📥 Import JSON (Popup)</button>
                         <button class="btn primary" id="exportBtn">📤 Export JSON (Popup)</button>
                         <button class="btn primary" id="exportGifBtn">🎞️ Export GIF</button>
                     </div>
@@ -720,17 +817,46 @@
         </div>
     </div>
 
-    <!-- JSON Modal -->
+    <!-- Import JSON Modal -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">📥 Import JSON <span class="info-badge">v4 Format</span></div>
+                <button class="modal-close" id="closeImportModal">✕</button>
+            </div>
+            <div class="modal-subtitle">วาง JSON code ด้านล่าง หรืออัพโหลดไฟล์</div>
+
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-zone-icon">📁</div>
+                <div class="upload-zone-text">คลิกเพื่อเลือกไฟล์ JSON</div>
+                <div class="upload-zone-hint">รองรับไฟล์ .json (v4 format)</div>
+            </div>
+
+            <div class="divider">หรือวาง JSON code ด้านล่าง</div>
+
+            <textarea class="json-output" id="importTextarea" placeholder='{"v":4,"frames":[{"d":100,"p":[...]}]}'></textarea>
+
+            <div class="modal-actions">
+                <button class="btn secondary" id="cancelImportBtn">ยกเลิก</button>
+                <button class="btn success" id="confirmImportBtn">✓ Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export JSON Modal -->
     <div class="modal" id="jsonModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">📋 JSON Output (v4 Format)</div>
+                <div class="modal-title">📤 Export JSON <span class="info-badge">v4 Format</span></div>
                 <button class="modal-close" id="closeJsonModal">✕</button>
             </div>
+            <div class="modal-subtitle">คัดลอก code หรือดาวน์โหลดเป็นไฟล์</div>
+
             <textarea class="json-output" id="jsonOutput" readonly></textarea>
+
             <div class="modal-actions">
-                <button class="btn" id="copyJsonBtn"> คัดลอก</button>
-                <button class="btn primary" id="downloadJsonBtn"> ดาวน์โหลด JSON</button>
+                <button class="btn" id="copyJsonBtn">📋 คัดลอก</button>
+                <button class="btn primary" id="downloadJsonBtn">💾 ดาวน์โหลด JSON</button>
             </div>
         </div>
     </div>
@@ -1216,23 +1342,57 @@
         function importJSON(jsonString) {
             try {
                 const data = JSON.parse(jsonString);
-                if (data.v !== 4 && data.v !== '4') {
+                
+                // Support both v:4 and "v ":4 (with spaces in keys)
+                let version = data.v;
+                if (version === undefined) {
+                    // Try to find version key with spaces
+                    const keys = Object.keys(data);
+                    const vKey = keys.find(k => k.trim() === 'v');
+                    if (vKey) version = data[vKey];
+                }
+                
+                if (version !== 4 && version !== '4') {
                     showToast('ไม่รองรับ JSON version นี้ (ต้องเป็น v4)');
-                    return;
+                    return false;
                 }
 
-                frames = data.frames.map(frame => {
+                let framesData = data.frames;
+                if (!framesData) {
+                    const keys = Object.keys(data);
+                    const fKey = keys.find(k => k.trim() === 'frames');
+                    if (fKey) framesData = data[fKey];
+                }
+
+                if (!framesData || !Array.isArray(framesData)) {
+                    showToast('ไม่พบข้อมูล frames ใน JSON');
+                    return false;
+                }
+
+                frames = framesData.map(frame => {
                     const pixels = new Array(GRID_SIZE * GRID_SIZE).fill(0);
+                    
+                    // Get frame data with space-tolerant keys
+                    let duration = frame.d;
+                    let pixelData = frame.p;
+                    
+                    if (duration === undefined || pixelData === undefined) {
+                        const keys = Object.keys(frame);
+                        const dKey = keys.find(k => k.trim() === 'd');
+                        const pKey = keys.find(k => k.trim() === 'p');
+                        if (dKey) duration = frame[dKey];
+                        if (pKey) pixelData = frame[pKey];
+                    }
                     
                     // Map ค่าจาก JSON array (137 ค่า) ไปยังตำแหน่งที่ถูกต้อง
                     PIXEL_MAPPING.forEach(({ jsonIndex, row, col }) => {
-                        if (jsonIndex < frame.p.length) {
-                            pixels[row * GRID_SIZE + col] = frame.p[jsonIndex];
+                        if (pixelData && jsonIndex < pixelData.length) {
+                            pixels[row * GRID_SIZE + col] = pixelData[jsonIndex];
                         }
                     });
                     
                     return {
-                        duration: frame.d || 100,
+                        duration: duration || 100,
                         pixels: pixels
                     };
                 });
@@ -1242,9 +1402,10 @@
                 historyIndex = -1;
                 renderFrame();
                 updateUI();
-                showToast('นำเข้า JSON สำเร็จ!');
+                return true;
             } catch (e) {
                 showToast('เกิดข้อผิดพลาด: ' + e.message);
+                return false;
             }
         }
 
@@ -1271,6 +1432,38 @@
             showToast('ดาวน์โหลด JSON แล้ว!');
         }
 
+        function handleImportFromTextarea() {
+            const textarea = document.getElementById('importTextarea');
+            const jsonString = textarea.value.trim();
+            
+            if (!jsonString) {
+                showToast('กรุณาใส่ JSON code หรือเลือกไฟล์');
+                return;
+            }
+
+            const success = importJSON(jsonString);
+            if (success) {
+                document.getElementById('importModal').classList.remove('active');
+                textarea.value = '';
+                showToast('นำเข้า JSON สำเร็จ!');
+            }
+        }
+
+        function handleImportFromFile(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const success = importJSON(event.target.result);
+                if (success) {
+                    document.getElementById('importModal').classList.remove('active');
+                    document.getElementById('importTextarea').value = '';
+                    showToast('นำเข้าไฟล์ JSON สำเร็จ!');
+                }
+            };
+            reader.readAsText(file);
+        }
+
         async function exportGIF() {
             const modal = document.getElementById('gifModal');
             const progressFill = document.getElementById('progressFill');
@@ -1293,6 +1486,14 @@
             toast.textContent = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
 
         function setupEventListeners() {
@@ -1336,38 +1537,80 @@
                 }
             });
 
-            // Import/Export
+            // Import - Open modal
             document.getElementById('importBtn').addEventListener('click', () => {
+                document.getElementById('importTextarea').value = '';
+                openModal('importModal');
+            });
+
+            // Import - Upload zone click
+            document.getElementById('uploadZone').addEventListener('click', () => {
                 document.getElementById('fileInput').click();
             });
 
+            // Import - File input change
             document.getElementById('fileInput').addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        importJSON(event.target.result);
-                    };
-                    reader.readAsText(file);
+                    handleImportFromFile(file);
                 }
                 e.target.value = '';
             });
 
+            // Import - Drag and drop
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.style.borderColor = '#667eea';
+                uploadZone.style.background = '#1a1a2e';
+            });
+            uploadZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadZone.style.borderColor = '#3a3a3a';
+                uploadZone.style.background = '#0f0f0f';
+            });
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.style.borderColor = '#3a3a3a';
+                uploadZone.style.background = '#0f0f0f';
+                const file = e.dataTransfer.files[0];
+                if (file && file.name.endsWith('.json')) {
+                    handleImportFromFile(file);
+                } else {
+                    showToast('กรุณาเลือกไฟล์ .json');
+                }
+            });
+
+            // Import - Confirm button
+            document.getElementById('confirmImportBtn').addEventListener('click', handleImportFromTextarea);
+
+            // Import - Cancel button
+            document.getElementById('cancelImportBtn').addEventListener('click', () => {
+                closeModal('importModal');
+            });
+
+            // Import - Close button
+            document.getElementById('closeImportModal').addEventListener('click', () => {
+                closeModal('importModal');
+            });
+
+            // Export - Open modal
             document.getElementById('exportBtn').addEventListener('click', () => {
                 updateJsonOutput();
-                document.getElementById('jsonModal').classList.add('active');
+                openModal('jsonModal');
             });
 
             document.getElementById('closeJsonModal').addEventListener('click', () => {
-                document.getElementById('jsonModal').classList.remove('active');
+                closeModal('jsonModal');
             });
 
             document.getElementById('copyJsonBtn').addEventListener('click', copyJson);
             document.getElementById('downloadJsonBtn').addEventListener('click', downloadJson);
 
+            // GIF
             document.getElementById('exportGifBtn').addEventListener('click', exportGIF);
             document.getElementById('closeGifModal').addEventListener('click', () => {
-                document.getElementById('gifModal').classList.remove('active');
+                closeModal('gifModal');
             });
 
             // Global events
@@ -1393,6 +1636,15 @@
                         modal.classList.remove('active');
                     }
                 });
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.active').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                }
             });
         }
 
