@@ -316,12 +316,29 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
 
-        .color-value {
-            font-size: 18px;
+        .color-number-input {
+            width: 65px;
+            padding: 8px;
+            background: #0a0a0a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
             font-weight: 600;
-            min-width: 45px;
-            text-align: right;
             font-family: monospace;
+        }
+
+        .color-number-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .color-hint {
+            font-size: 11px;
+            color: #666;
+            margin-top: 8px;
+            text-align: center;
         }
 
         /* Tools */
@@ -603,14 +620,6 @@
             flex-wrap: wrap;
         }
 
-        .modal-actions-row {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-
         .upload-zone {
             border: 2px dashed #3a3a3a;
             border-radius: 8px;
@@ -734,7 +743,7 @@
             <!-- LEFT COLUMN - Frames -->
             <div class="left-column">
                 <div class="frames-section">
-                    <div class="section-title">️ เฟรมทั้งหมด</div>
+                    <div class="section-title">🎞️ เฟรมทั้งหมด</div>
                     <div class="frames-list" id="framesList"></div>
                     <div class="frame-controls">
                         <button class="btn primary" id="addFrameBtn">+ เพิ่มเฟรม</button>
@@ -786,9 +795,10 @@
                     <div class="color-control">
                         <div class="color-slider-container">
                             <div class="color-preview" id="colorPreview"></div>
-                            <input type="range" class="slider" id="colorSlider" min="0" max="255" value="255">
-                            <div class="color-value" id="colorValue">255</div>
+                            <input type="range" class="slider" id="colorSlider" min="0" max="255" step="10" value="255">
+                            <input type="number" class="color-number-input" id="colorNumberInput" min="0" max="255" step="1" value="255">
                         </div>
+                        <div class="color-hint">Slider: ลงท้ายด้วย 0 (ยกเว้น 255) • กรอกเลข: 0-255</div>
                     </div>
                 </div>
 
@@ -1497,12 +1507,43 @@
         }
 
         function setupEventListeners() {
-            // Color slider
+            // Color slider - step 10, but snap to 255 when >= 250
             document.getElementById('colorSlider').addEventListener('input', (e) => {
-                currentColor = parseInt(e.target.value);
-                document.getElementById('colorValue').textContent = currentColor;
+                let value = parseInt(e.target.value);
+                // ถ้าค่า >= 250 ให้เป็น 255
+                if (value >= 250) {
+                    value = 255;
+                    e.target.value = 255;
+                }
+                currentColor = value;
+                document.getElementById('colorNumberInput').value = value;
                 document.getElementById('colorPreview').style.background = 
-                    `rgb(${currentColor}, ${currentColor}, ${currentColor})`;
+                    `rgb(${value}, ${value}, ${value})`;
+            });
+
+            // Color number input - custom value 0-255
+            document.getElementById('colorNumberInput').addEventListener('input', (e) => {
+                let value = parseInt(e.target.value);
+                if (isNaN(value)) return;
+                value = Math.max(0, Math.min(255, value));
+                currentColor = value;
+                document.getElementById('colorSlider').value = value;
+                document.getElementById('colorPreview').style.background = 
+                    `rgb(${value}, ${value}, ${value})`;
+            });
+
+            document.getElementById('colorNumberInput').addEventListener('change', (e) => {
+                let value = parseInt(e.target.value);
+                if (isNaN(value)) {
+                    value = currentColor;
+                } else {
+                    value = Math.max(0, Math.min(255, value));
+                }
+                e.target.value = value;
+                currentColor = value;
+                document.getElementById('colorSlider').value = value;
+                document.getElementById('colorPreview').style.background = 
+                    `rgb(${value}, ${value}, ${value})`;
             });
 
             // Canvas tools
