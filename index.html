@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nothing OS Glyph Matrix Studio (13x13)</title>
     <!-- Google Fonts for Nothing Aesthetic -->
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Doto:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-pure: #000000;
@@ -22,6 +22,7 @@
             --glyph-off: #242426;
             --font-main: 'Space Grotesk', -apple-system, system-ui, sans-serif;
             --font-mono: 'Courier Prime', monospace;
+            --font-doto: 'Doto', cursive;
         }
 
         * {
@@ -93,10 +94,10 @@
 
         .brand-title h1 {
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            font-family: var(--font-mono);
+            font-family: var(--font-doto);
         }
 
         /* Nothing-style red dot */
@@ -324,7 +325,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
-            margin-top: 8px;
+            margin-bottom: 12px;
         }
 
         /* CENTER COLUMN: GLYPH EMULATOR */
@@ -395,6 +396,72 @@
             box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
         }
 
+        /* Onion Skin Switch - Bottom Right of Phone Bezel */
+        .onion-skin-switch {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            cursor: pointer;
+            padding: 8px 14px;
+            background: rgba(28, 28, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-primary);
+            border-radius: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .onion-skin-switch:hover {
+            background: rgba(40, 40, 42, 0.9);
+            border-color: #3a3a3c;
+        }
+
+        .onion-skin-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .onion-skin-switch.active .onion-skin-label {
+            color: var(--accent-red);
+        }
+
+        .onion-switch-track {
+            width: 36px;
+            height: 20px;
+            background: #3a3a3c;
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.2s ease;
+        }
+
+        .onion-switch-track::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .onion-skin-switch.active .onion-switch-track {
+            background: var(--accent-red);
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.5);
+        }
+
+        .onion-skin-switch.active .onion-switch-track::after {
+            transform: translateX(16px);
+        }
+
         /* Main circular glyph cluster */
         .matrix-grid {
             display: grid;
@@ -462,7 +529,7 @@
         .playback-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .play-button {
@@ -495,62 +562,73 @@
             font-size: 13px;
         }
 
+        /* FPS Control in Playback */
+        .fps-control-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-widget);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 8px 12px;
+        }
+
+        .fps-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .fps-input-inline {
+            width: 36px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-primary);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .fps-input-inline:focus {
+            outline: none;
+            border-bottom-color: #fff;
+        }
+
+        .fps-slider-inline {
+            width: 80px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 3px;
+            background: #2c2c2e;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .fps-slider-inline::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--bg-pure);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .fps-slider-inline::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
         /* RIGHT COLUMN: CONTROLS & IO */
         .right-column {
             display: flex;
             flex-direction: column;
             gap: 20px;
-        }
-
-        /* CUSTOM NOT-STYLE ONION SKIN & PRESETS */
-        .toggle-hybrid {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-widget);
-            border: 1px solid var(--border-primary);
-            border-radius: 14px;
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .toggle-hybrid:hover {
-            background: #242426;
-        }
-
-        .toggle-hybrid-label {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .toggle-switch-ui {
-            width: 38px;
-            height: 20px;
-            background: #3a3a3c;
-            border-radius: 10px;
-            position: relative;
-            transition: background 0.2s ease;
-        }
-
-        .toggle-switch-ui::after {
-            content: '';
-            position: absolute;
-            left: 2px;
-            top: 2px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #fff;
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .toggle-hybrid.active .toggle-switch-ui {
-            background: var(--accent-red);
-        }
-
-        .toggle-hybrid.active .toggle-switch-ui::after {
-            transform: translateX(18px);
         }
 
         /* SLIDER / ENCODER COMPONENT */
@@ -866,6 +944,14 @@
             .phone-bezel-emulator {
                 padding: 16px;
             }
+            .onion-skin-switch {
+                bottom: 16px;
+                right: 16px;
+                padding: 6px 10px;
+            }
+            .onion-skin-label {
+                font-size: 9px;
+            }
         }
     </style>
 </head>
@@ -894,27 +980,16 @@
                         FH1 : SEQUENCER
                         <span class="dot-indicator"></span>
                     </div>
-                    <div class="frames-container" id="framesContainer">
-                        <!-- Frame cards will render dynamically here -->
-                    </div>
+                    <!-- Frame Action Bar moved to top -->
                     <div class="frame-action-bar">
                         <button class="btn-raw primary" id="addFrameBtn">+ FRAME</button>
                         <button class="btn-raw" id="cloneFrameBtn">CLONE</button>
                     </div>
-                    <div style="margin-top: 8px;">
+                    <div style="margin-bottom: 12px;">
                         <button class="btn-raw accent" id="deleteFrameBtn" style="width: 100%;">DELETE CURRENT</button>
                     </div>
-                </div>
-
-                <div class="widget">
-                    <div class="widget-title">
-                        PLAY SPEED
-                        <span class="dot-indicator"></span>
-                    </div>
-                    <div class="encoder-group" style="padding: 10px 14px;">
-                        <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">FPS</span>
-                        <input type="number" id="fpsInput" value="8" min="1" max="60" class="encoder-input" style="width: 44px; text-align: left; border: none; font-weight: bold;">
-                        <input type="range" id="fpsSlider" min="1" max="40" value="8" class="custom-slider">
+                    <div class="frames-container" id="framesContainer">
+                        <!-- Frame cards will render dynamically here -->
                     </div>
                 </div>
             </section>
@@ -930,6 +1005,12 @@
                             <!-- Matrix cells initialized inside IIFE -->
                         </div>
                     </div>
+
+                    <!-- Onion Skin Switch - Bottom Right -->
+                    <div class="onion-skin-switch" id="onionToggle">
+                        <span class="onion-skin-label">ONION</span>
+                        <div class="onion-switch-track"></div>
+                    </div>
                 </div>
 
                 <div class="widget playback-widget">
@@ -942,9 +1023,11 @@
                         </div>
                     </div>
 
-                    <div class="toggle-hybrid" id="onionToggle">
-                        <div class="toggle-switch-ui"></div>
-                        <div class="toggle-hybrid-label" style="font-family: var(--font-mono); font-size: 11px; margin-left: 10px;">ONION SKIN</div>
+                    <!-- FPS Control moved here -->
+                    <div class="fps-control-inline">
+                        <span class="fps-label">FPS</span>
+                        <input type="number" id="fpsInput" value="8" min="1" max="60" class="fps-input-inline">
+                        <input type="range" id="fpsSlider" min="1" max="40" value="8" class="fps-slider-inline">
                     </div>
                 </div>
             </section>
@@ -1623,6 +1706,7 @@
                     
                     document.getElementById('playBtn').addEventListener('click', toggleSequencerState);
                     
+                    // Onion Skin Toggle - new element
                     document.getElementById('onionToggle').addEventListener('click', function() {
                         this.classList.toggle('active');
                         onionSkinEnabled = this.classList.contains('active');
