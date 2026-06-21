@@ -3,57 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Round Glyph Matrix LED 13x13 for 4A pro</title>
+    <title>Nothing OS Glyph Matrix Studio (13x13)</title>
+    <!-- Google Fonts for Nothing Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-pure: #000000;
+            --bg-elevated: #0a0a0a;
+            --bg-card: #121212;
+            --bg-widget: #1c1c1e;
+            --border-primary: #2c2c2e;
+            --border-glow: #e5e5ea;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --accent-red: #ff3b30;
+            --accent-red-hover: #ff453a;
+            --glyph-active: #ffffff;
+            --glyph-off: #242426;
+            --font-main: 'Space Grotesk', -apple-system, system-ui, sans-serif;
+            --font-mono: 'Courier Prime', monospace;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
+            font-family: var(--font-main);
+            background: var(--bg-pure);
+            color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            letter-spacing: -0.02em;
+        }
+
+        /* Ambient Nothing Background Track Lines */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.015) 1px, transparent 1px),
+                radial-gradient(circle at 80% 60%, rgba(255,255,255,0.015) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1512px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px;
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
+        /* HEADER & BRANDING */
         header {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-primary);
+            padding-bottom: 16px;
         }
 
-        header h1 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .brand-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        header p {
-            color: #888;
-            font-size: 13px;
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
+        .brand-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-family: var(--font-mono);
+        }
+
+        /* Nothing-style red dot */
+        .brand-active-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-red);
+            display: inline-block;
+            animation: pulse-red 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-model {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-model::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+
+        /* MAIN WYSIWYG LAYOUT */
         .main-layout {
             display: grid;
-            grid-template-columns: 320px 1fr 380px;
-            gap: 20px;
+            grid-template-columns: 290px 1fr 390px;
+            gap: 24px;
+            flex-grow: 1;
             align-items: start;
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 1280px) {
             .main-layout {
-                grid-template-columns: 1fr 380px;
+                grid-template-columns: 1fr 390px;
             }
             .left-column {
                 grid-column: 1 / -1;
@@ -64,1665 +167,1631 @@
             .main-layout {
                 grid-template-columns: 1fr;
             }
+            .left-column {
+                grid-column: span 1;
+            }
         }
 
-        /* LEFT COLUMN - Frames */
+        /* CARD/WIDGET STYLING (NOTHING OS 3.0 INSPIRATION) */
+        .widget {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: 24px;
+            padding: 20px;
+            transition: border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .widget:hover {
+            border-color: #3a3a3c;
+        }
+
+        .widget-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .widget-title span.dot-indicator {
+            width: 6px;
+            height: 6px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* LEFT COLUMN: FILMS/FRAMES WIDGET */
         .left-column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            position: sticky;
-            top: 20px;
+            gap: 16px;
         }
 
-        /* CENTER COLUMN - Canvas */
-        .center-column {
+        .frames-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 4px;
         }
 
-        .canvas-section {
-            background: #1a1a1a;
+        /* Scrollbar styles to match Nothing OS dark theme */
+        .frames-container::-webkit-scrollbar, .modal-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .frames-container::-webkit-scrollbar-track, .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .frames-container::-webkit-scrollbar-thumb, .modal-content::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 2px;
+        }
+
+        .frame-card {
+            background: var(--bg-widget);
             border-radius: 16px;
-            padding: 25px;
-        }
-
-        .canvas-header {
+            padding: 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            gap: 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .canvas-title {
-            font-size: 14px;
-            color: #aaa;
+        .frame-card:hover {
+            background: #242426;
+            transform: translateY(-1px);
         }
 
-        .canvas-tools {
+        .frame-card.active {
+            background: #2c2c2e;
+            border-color: #fff;
+        }
+
+        .frame-card .thumbnail-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            background: #000;
+            border: 1px solid #333;
+            overflow: hidden;
             display: flex;
-            gap: 8px;
+            align-items: center;
+            justify-content: center;
         }
 
-        .grid-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto;
-            aspect-ratio: 1;
-            background: radial-gradient(circle, #222 0%, #111 70%, #000 100%);
-            border-radius: 50%;
-            padding: 15px;
-            border: 2px solid #333;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(13, 1fr);
-            grid-template-rows: repeat(13, 1fr);
-            gap: 3px;
+        .frame-card canvas {
+            image-rendering: pixelated;
             width: 100%;
             height: 100%;
         }
 
-        .pixel {
-            aspect-ratio: 1;
-            background: #1a1a1a;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: transform 0.08s, background 0.08s;
-            user-select: none;
-        }
-
-        .pixel:hover:not(.dead) {
-            transform: scale(1.15);
-            z-index: 10;
-            box-shadow: 0 0 6px rgba(102, 126, 234, 0.5);
-        }
-
-        .pixel.dead {
-            background: transparent;
-            cursor: not-allowed;
-        }
-
-        /* Playback */
-        .playback-section {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 20px;
-        }
-
-        .playback-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .play-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #667eea;
-            border: none;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-
-        .play-btn:hover {
-            background: #5568d3;
-            transform: scale(1.05);
-        }
-
-        .frame-display {
-            font-size: 14px;
-            color: #aaa;
-            font-family: monospace;
-        }
-
-        .onion-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: #aaa;
-            margin-left: auto;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 44px;
-            height: 24px;
-            background: #2a2a2a;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: #667eea;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(20px);
-        }
-
-        /* RIGHT COLUMN */
-        .right-column {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            position: sticky;
-            top: 20px;
-        }
-
-        .panel {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 18px;
-        }
-
-        /* FPS Panel */
-        .fps-panel {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .fps-panel label {
-            font-size: 14px;
-            color: #aaa;
-            font-weight: 500;
-        }
-
-        .fps-panel input {
-            flex: 1;
-            padding: 10px;
-            background: #0a0a0a;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            color: #fff;
-            text-align: center;
-            font-size: 16px;
-            font-family: monospace;
-        }
-
-        .fps-panel input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .fps-unit {
-            color: #888;
-            font-size: 13px;
-        }
-
-        /* Color Panel */
-        .color-control {
-            margin-bottom: 10px;
-        }
-
-        .color-slider-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .color-preview {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            border: 2px solid #3a3a3a;
-            flex-shrink: 0;
-        }
-
-        .slider {
-            flex: 1;
-            height: 8px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: linear-gradient(to right, #000, #fff);
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            border: 2px solid #667eea;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-        }
-
-        .color-number-input {
-            width: 65px;
-            padding: 8px;
-            background: #0a0a0a;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            color: #fff;
-            text-align: center;
-            font-size: 16px;
-            font-weight: 600;
-            font-family: monospace;
-        }
-
-        .color-number-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .color-hint {
-            font-size: 11px;
-            color: #666;
-            margin-top: 8px;
-            text-align: center;
-        }
-
-        /* Tools */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .btn {
-            padding: 10px 14px;
-            background: #2a2a2a;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn:hover {
-            background: #3a3a3a;
-            border-color: #4a4a4a;
-        }
-
-        .btn.primary {
-            background: #667eea;
-            border-color: #667eea;
-        }
-
-        .btn.primary:hover {
-            background: #5568d3;
-        }
-
-        .btn.danger {
-            background: #dc3545;
-            border-color: #dc3545;
-        }
-
-        .btn.danger:hover {
-            background: #c82333;
-        }
-
-        .btn.success {
-            background: #28a745;
-            border-color: #28a745;
-        }
-
-        .btn.success:hover {
-            background: #218838;
-        }
-
-        .btn.secondary {
-            background: #495057;
-            border-color: #495057;
-        }
-
-        .btn.secondary:hover {
-            background: #343a40;
-        }
-
-        /* Frames */
-        .frames-section {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 18px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #ccc;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .frames-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-
-        .frames-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .frames-list::-webkit-scrollbar-track {
-            background: #0a0a0a;
-            border-radius: 3px;
-        }
-
-        .frames-list::-webkit-scrollbar-thumb {
-            background: #3a3a3a;
-            border-radius: 3px;
-        }
-
-        .frame-thumb {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #2a2a2a;
-            border: 2px solid #3a3a3a;
-            border-radius: 10px;
-            cursor: pointer;
-            padding: 8px;
-            transition: all 0.2s;
-        }
-
-        .frame-thumb.active {
-            border-color: #667eea;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
-        }
-
-        .frame-thumb:hover {
-            border-color: #667eea;
-        }
-
-        .frame-thumb canvas {
-            width: 50px;
-            height: 50px;
-            border-radius: 4px;
-            background: #000;
-            flex-shrink: 0;
-        }
-
-        .frame-info {
-            flex: 1;
+        .frame-card-details {
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
-        .frame-number {
+        .frame-card-name {
             font-size: 12px;
-            color: #aaa;
-            font-family: monospace;
+            font-family: var(--font-mono);
+            font-weight: bold;
         }
 
-        .frame-duration-input {
-            width: 70px;
-            padding: 4px 6px;
-            background: #1a1a1a;
-            border: 1px solid #3a3a3a;
+        .frame-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ms-badge {
+            background: var(--bg-pure);
+            border: 1px solid var(--border-primary);
             border-radius: 4px;
+            font-size: 9px;
+            padding: 2px 4px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+        }
+
+        .frame-card-duration-input {
+            width: 60px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed var(--border-primary);
             color: #fff;
-            text-align: center;
+            font-family: var(--font-mono);
             font-size: 11px;
-            font-family: monospace;
+            text-align: right;
         }
 
-        .frame-duration-input:focus {
+        .frame-card-duration-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-bottom-color: #fff;
         }
 
-        .frame-controls {
+        .frame-action-bar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        /* CENTER COLUMN: GLYPH EMULATOR */
+        .emulator-container {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 20px;
         }
 
-        .frame-controls .btn {
+        .phone-bezel-emulator {
+            background: radial-gradient(100% 100% at 50% 0%, #151515 0%, #080808 100%);
+            border: 4px solid #1a1a1c;
+            border-radius: 40px;
+            padding: 30px;
             width: 100%;
-        }
-
-        /* Import/Export */
-        .io-buttons {
+            box-shadow: 0 24px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.02);
+            position: relative;
             display: flex;
             flex-direction: column;
+            align-items: center;
+        }
+
+        /* Transparent engineering lines underneath matrix */
+        .phone-internal-circuits {
+            position: absolute;
+            top: 24px;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            pointer-events: none;
+            opacity: 0.15;
+            border: 1px solid #ffffff;
+            border-radius: 32px;
+        }
+
+        .phone-internal-circuits::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 100px);
+            height: calc(100% - 100px);
+            border: 1px dashed #ffffff;
+            border-radius: 50%;
+        }
+
+        .nothing-hardware-logo {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.25);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            z-index: 1;
+        }
+
+        .grid-wrapper-circular {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+            aspect-ratio: 1;
+            background: #030303;
+            border: 1px solid #1d1d1f;
+            border-radius: 50%;
+            padding: 24px;
+            z-index: 2;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+        }
+
+        /* Main circular glyph cluster */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            grid-template-rows: repeat(13, 1fr);
+            gap: 5px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .led-node {
+            aspect-ratio: 1;
+            background: var(--glyph-off);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        /* Visual connector details similar to real Glyph segments */
+        .led-node::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 70%;
+            height: 70%;
+            border-radius: 1px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.12s ease;
+        }
+
+        .led-node:hover:not(.null-zone) {
+            transform: scale(1.1);
+            background: #2c2c2e;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+            z-index: 3;
+        }
+
+        .led-node.null-zone {
+            background: transparent !important;
+            cursor: default!important;
+        }
+
+        .led-node.null-zone::before {
+            display: none;
+        }
+
+        /* LED Brightness States scaling with color values */
+        .led-node.lit {
+            background-color: var(--glyph-active);
+            box-shadow: 0 0 14px rgba(255,255,255,0.95);
+        }
+
+        /* PLAYBACK AND UTILS BAR */
+        .playback-widget {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-radius: 20px;
+            padding: 14px 20px;
+        }
+
+        .playback-controls {
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
 
-        .io-buttons .btn {
-            width: 100%;
+        .play-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--text-primary);
+            border: none;
+            color: var(--bg-pure);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
         }
 
-        input[type="file"] {
-            display: none;
+        .play-button:hover {
+            transform: scale(1.05);
+            background-color: #e5e5ea;
         }
 
-        /* Modal */
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .sequence-info {
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        /* RIGHT COLUMN: CONTROLS & IO */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* CUSTOM NOT-STYLE ONION SKIN & PRESETS */
+        .toggle-hybrid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-widget);
+            border: 1px solid var(--border-primary);
+            border-radius: 14px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-hybrid:hover {
+            background: #242426;
+        }
+
+        .toggle-hybrid-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .toggle-switch-ui {
+            width: 38px;
+            height: 20px;
+            background: #3a3a3c;
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.2s ease;
+        }
+
+        .toggle-switch-ui::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toggle-hybrid.active .toggle-switch-ui {
+            background: var(--accent-red);
+        }
+
+        .toggle-hybrid.active .toggle-switch-ui::after {
+            transform: translateX(18px);
+        }
+
+        /* SLIDER / ENCODER COMPONENT */
+        .encoder-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-widget);
+            border-radius: 16px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-primary);
+        }
+
+        .encoder-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border-primary);
+            flex-shrink: 0;
+            transition: background 0.1s;
+        }
+
+        .custom-slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: #2c2c2e;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--bg-pure);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .custom-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        .encoder-input {
+            width: 50px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-primary);
+            color: #fff;
+            font-family: var(--font-mono);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .encoder-input:focus {
+            outline: none;
+            border-bottom-color: #fff;
+        }
+
+        /* GRID/TOOLS LAYOUT */
+        .grid-tools {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        /* BUTTON DESIGN - PREMIUM RAW FLAT NOT-OS STYLING */
+        .btn-raw {
+            background-color: var(--bg-widget);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-raw:hover {
+            background-color: #242426;
+            border-color: #3a3a3c;
+        }
+
+        .btn-raw:active {
+            transform: scale(0.97);
+        }
+
+        .btn-raw.primary {
+            background-color: var(--text-primary);
+            color: var(--bg-pure);
+            border-color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .btn-raw.primary:hover {
+            background-color: #e5e5ea;
+            border-color: #e5e5ea;
+        }
+
+        .btn-raw.accent {
+            background-color: rgba(255, 59, 48, 0.12);
+            color: #ff453a;
+            border-color: rgba(255, 59, 48, 0.2);
+        }
+
+        .btn-raw.accent:hover {
+            background-color: rgba(255, 59, 48, 0.2);
+            border-color: rgba(255, 59, 48, 0.3);
+        }
+
+        .btn-raw.secondary {
+            background-color: transparent;
+            border-color: var(--border-primary);
+        }
+
+        .btn-raw.secondary:hover {
+            background-color: var(--bg-widget);
+        }
+
+        /* MODAL STYLING (NOT-OS FLOATING CARD) */
         .modal {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 1000;
-            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
             justify-content: center;
-            padding: 20px;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .modal.active {
-            display: flex;
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .modal-content {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 25px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 85vh;
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            max-width: 580px;
+            width: 90%;
+            border-radius: 28px;
+            padding: 24px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
             overflow-y: auto;
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .modal-title {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
         }
 
-        .modal-close {
+        .modal-close-btn {
+            background: var(--bg-widget);
+            border: 1px solid var(--border-primary);
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: #2a2a2a;
-            border: none;
             color: #fff;
-            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .modal-close:hover {
-            background: #3a3a3a;
+        .modal-close-btn:hover {
+            background: #242426;
         }
 
-        .modal-subtitle {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 15px;
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .json-output {
-            width: 100%;
-            min-height: 280px;
-            background: #0a0a0a;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            padding: 15px;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
+        .textarea-not {
+            background: #000;
+            border: 1px solid var(--border-primary);
+            border-radius: 16px;
+            padding: 16px;
+            color: #30d158; /* Green Terminal Vibe */
+            font-family: var(--font-mono);
             font-size: 12px;
             resize: vertical;
-            margin-bottom: 15px;
+            width: 100%;
+            min-height: 200px;
+            outline: none;
         }
 
-        .json-output::placeholder {
-            color: #555;
+        .textarea-not:focus {
+            border-color: #30d158;
+        }
+
+        /* FILE DRAG ZONE */
+        .dropbox-not {
+            border: 1px dashed var(--border-primary);
+            border-radius: 16px;
+            background: var(--bg-widget);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            cursor: pointer;
+            text-align: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .dropbox-not:hover {
+            border-color: #fff;
+            background: #242426;
+        }
+
+        .dropbox-icon {
+            font-size: 32px;
         }
 
         .modal-actions {
             display: flex;
-            gap: 10px;
             justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .upload-zone {
-            border: 2px dashed #3a3a3a;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #0f0f0f;
-        }
-
-        .upload-zone:hover {
-            border-color: #667eea;
-            background: #1a1a2e;
-        }
-
-        .upload-zone-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .upload-zone-text {
-            font-size: 13px;
-            color: #aaa;
-        }
-
-        .upload-zone-hint {
-            font-size: 11px;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
             gap: 12px;
-            margin: 15px 0;
-            color: #666;
-            font-size: 12px;
+            margin-top: 20px;
         }
 
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #3a3a3a;
-        }
-
-        /* GIF Modal */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #2a2a2a;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transition: width 0.3s;
-        }
-
-        .progress-text {
-            text-align: center;
-            color: #aaa;
-            font-size: 14px;
-        }
-
-        /* Toast */
-        .toast {
+        /* TOAST HUD (Minimal bottom notifier) */
+        .toast-not {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #667eea;
-            color: #fff;
+            background: #fff;
+            color: #000;
             padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 2000;
+            border-radius: 30px;
+            font-family: var(--font-main);
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             opacity: 0;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2000;
             pointer-events: none;
         }
 
-        .toast.show {
+        .toast-not.active {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
 
-        .hint {
-            font-size: 11px;
-            color: #666;
-            text-align: center;
-            margin-top: 10px;
+        .toast-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-red);
+            border-radius: 50%;
         }
 
-        .info-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            background: #2a2a2a;
-            border-radius: 4px;
-            font-size: 11px;
-            color: #888;
-            margin-left: 8px;
-            font-family: monospace;
+        /* EXTRA FOOTER DETAILS */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-primary);
+            padding: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive layout adaptation */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .phone-bezel-emulator {
+                padding: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- GLOBAL APP HEADER -->
         <header>
-            <h1>🔵 Round Glyph Matrix LED 13x13 for 4A pro</h1>
-            <p>สร้างอนิเมชั่นพิกเซลอาร์ตแบบเฟรมต่อเฟรม • รองรับ JSON v4 Format (137 active pixels)</p>
+            <div class="brand-group">
+                <div class="brand-title">
+                    <span class="brand-active-dot"></span>
+                    <h1>GLYPH ENGINE 4A PRO</h1>
+                </div>
+                <div class="brand-subtitle">Nothing OS // LED Dot Matrix Synthesizer</div>
+            </div>
+            <div class="tag-model">
+                MATRIX 13×13 (V4 COMPLIANT)
+            </div>
         </header>
 
-        <div class="main-layout">
-            <!-- LEFT COLUMN - Frames -->
-            <div class="left-column">
-                <div class="frames-section">
-                    <div class="section-title">🎞️ เฟรมทั้งหมด</div>
-                    <div class="frames-list" id="framesList"></div>
-                    <div class="frame-controls">
-                        <button class="btn primary" id="addFrameBtn">+ เพิ่มเฟรม</button>
-                        <button class="btn" id="duplicateFrameBtn">📋 คัดลอก</button>
-                        <button class="btn danger" id="deleteFrameBtn">🗑️ ลบ</button>
+        <!-- APP INTERACTIVE LAYOUT -->
+        <main class="main-layout">
+            <!-- LEFT COLUMN: FRAMES LIST & ENGINE CONTROL -->
+            <section class="left-column">
+                <div class="widget">
+                    <div class="widget-title">
+                        FH1 : SEQUENCER
+                        <span class="dot-indicator"></span>
+                    </div>
+                    <div class="frames-container" id="framesContainer">
+                        <!-- Frame cards will render dynamically here -->
+                    </div>
+                    <div class="frame-action-bar">
+                        <button class="btn-raw primary" id="addFrameBtn">+ FRAME</button>
+                        <button class="btn-raw" id="cloneFrameBtn">CLONE</button>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <button class="btn-raw accent" id="deleteFrameBtn" style="width: 100%;">DELETE CURRENT</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- CENTER COLUMN - Canvas -->
-            <div class="center-column">
-                <div class="canvas-section">
-                    <div class="canvas-header">
-                        <div class="canvas-title">Canvas • คลิก/ลากเพื่อวาด • ขวาคลิกเพื่อลบ</div>
-                        <div class="canvas-tools">
-                            <button class="btn" id="undoBtn">↶</button>
-                            <button class="btn" id="redoBtn">↷</button>
-                            <button class="btn danger" id="clearBtn">🗑️ ล้าง</button>
+                <div class="widget">
+                    <div class="widget-title">
+                        PLAY SPEED
+                        <span class="dot-indicator"></span>
+                    </div>
+                    <div class="encoder-group" style="padding: 10px 14px;">
+                        <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">FPS</span>
+                        <input type="number" id="fpsInput" value="8" min="1" max="60" class="encoder-input" style="width: 44px; text-align: left; border: none; font-weight: bold;">
+                        <input type="range" id="fpsSlider" min="1" max="40" value="8" class="custom-slider">
+                    </div>
+                </div>
+            </section>
+
+            <!-- CENTER COLUMN: MAIN HARDWARE EMULATOR -->
+            <section class="emulator-container">
+                <div class="phone-bezel-emulator">
+                    <div class="phone-internal-circuits"></div>
+                    <div class="nothing-hardware-logo">NOTHING (R) CONCEPT DEV</div>
+                    
+                    <div class="grid-wrapper-circular">
+                        <div class="matrix-grid" id="matrixGrid">
+                            <!-- Matrix cells initialized inside IIFE -->
                         </div>
                     </div>
-                    <div class="grid-wrapper">
-                        <div class="grid" id="grid"></div>
-                    </div>
-                    <div class="hint">ขนาด 13×13 พิกเซล • เฉพาะพิกเซลในวงกลมเท่านั้นที่ใช้งานได้ (137 px)</div>
                 </div>
 
-                <div class="playback-section">
+                <div class="widget playback-widget">
                     <div class="playback-controls">
-                        <button class="play-btn" id="playBtn">▶</button>
-                        <div class="frame-display" id="currentFrameDisplay">เฟรมที่ 1 / 1</div>
-                        <div class="onion-toggle">
-                            <span>Onion Skin</span>
-                            <div class="toggle-switch" id="onionToggle"></div>
+                        <button class="play-button" id="playBtn">▶</button>
+                        <div class="sequence-info">
+                            <span id="currentFrameBadge" style="font-weight: bold;">01</span>
+                            <span style="color: var(--text-secondary);">/</span>
+                            <span id="totalFramesBadge" style="color: var(--text-secondary);">01</span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- RIGHT COLUMN - Tools -->
-            <div class="right-column">
-                <div class="panel fps-panel">
-                    <label>FPS:</label>
-                    <input type="number" id="fpsInput" value="8" min="1" max="60">
-                    <span class="fps-unit">เฟรม/วิ</span>
+                    <div class="toggle-hybrid" id="onionToggle">
+                        <div class="toggle-switch-ui"></div>
+                        <div class="toggle-hybrid-label" style="font-family: var(--font-mono); font-size: 11px; margin-left: 10px;">ONION SKIN</div>
+                    </div>
                 </div>
+            </section>
 
-                <div class="panel">
-                    <div class="section-title">🎨 สีปัจจุบัน (Grayscale)</div>
-                    <div class="color-control">
-                        <div class="color-slider-container">
-                            <div class="color-preview" id="colorPreview"></div>
-                            <input type="range" class="slider" id="colorSlider" min="0" max="255" step="10" value="255">
-                            <input type="number" class="color-number-input" id="colorNumberInput" min="0" max="255" step="1" value="255">
-                        </div>
-                        <div class="color-hint">Slider: ลงท้ายด้วย 0 (ยกเว้น 255) • กรอกเลข: 0-255</div>
+            <!-- RIGHT COLUMN: MODIFIERS AND JSON UTILS -->
+            <section class="right-column">
+                <div class="widget">
+                    <div class="widget-title">
+                        GLYPH INTENSITY
+                        <span class="dot-indicator"></span>
+                    </div>
+                    <div class="encoder-group">
+                        <div class="encoder-preview" id="colorPreview" style="background: #ffffff; box-shadow: 0 0 10px #ffffff;"></div>
+                        <input type="range" class="custom-slider" id="colorSlider" min="0" max="255" step="15" value="255">
+                        <input type="number" class="encoder-input" id="colorInput" min="0" max="255" value="255">
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 10px; font-family: var(--font-mono);">
+                        V4 COMPATIBLE STEP RATIO: 0-255 GS
                     </div>
                 </div>
 
-                <div class="panel">
-                    <div class="section-title">🛠️ เครื่องมือ</div>
-                    <div class="tools-grid">
-                        <button class="btn" id="fillBtn">🪣 Fill</button>
-                        <button class="btn" id="invertBtn">◐ Invert</button>
-                        <button class="btn" id="mirrorBtn">⬌ Mirror</button>
-                        <button class="btn" id="flipBtn">⬍ Flip</button>
-                        <button class="btn" id="rotateBtn">↻ Rotate</button>
-                        <button class="btn" id="showTemplateBtn">👁️ Template</button>
+                <div class="widget">
+                    <div class="widget-title">
+                        TRANSFORM MODULES
+                        <span class="dot-indicator"></span>
+                    </div>
+                    <div class="grid-tools">
+                        <button class="btn-raw" id="fillBtn">FILL</button>
+                        <button class="btn-raw" id="invertBtn">INVERT</button>
+                        <button class="btn-raw" id="mirrorBtn">MIRROR</button>
+                        <button class="btn-raw" id="flipBtn">FLIP</button>
+                        <button class="btn-raw" id="rotateBtn">ROTATE</button>
+                        <button class="btn-raw" id="clearBtn">CLEAR</button>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn-raw secondary" id="flashTemplateBtn" style="width: 100%;">FLASH HARDWARE SEGMENTS</button>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <div class="section-title">📥 Import / Export</div>
-                    <div class="io-buttons">
-                        <button class="btn primary" id="importBtn">📥 Import JSON (Popup)</button>
-                        <button class="btn primary" id="exportBtn">📤 Export JSON (Popup)</button>
-                        <button class="btn primary" id="exportGifBtn">🎞️ Export GIF</button>
+                <div class="widget">
+                    <div class="widget-title">
+                        DATA UTILS
+                        <span class="dot-indicator"></span>
                     </div>
-                    <input type="file" id="fileInput" accept=".json">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn-raw primary" id="importModalTrigger">IMPORT COMPILER JSON</button>
+                        <button class="btn-raw" id="exportModalTrigger">COMPILE & EXPORT</button>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
+
+        <!-- FOOTER BRANDING -->
+        <footer>
+            <div>DESIGNED IN LONDON // RECONSTRUCTED FOR NOTHING 4A PRO</div>
+            <div>[VER 4.1.0-STABLE]</div>
+        </footer>
     </div>
 
-    <!-- Import JSON Modal -->
+    <!-- MODAL: IMPORT -->
     <div class="modal" id="importModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">📥 Import JSON <span class="info-badge">v4 Format</span></div>
-                <button class="modal-close" id="closeImportModal">✕</button>
+                <div class="modal-title">INTERNAL LOADER [V4 FORMAT]</div>
+                <button class="modal-close-btn" id="closeImportBtn">✕</button>
             </div>
-            <div class="modal-subtitle">วาง JSON code ด้านล่าง หรืออัพโหลดไฟล์</div>
-
-            <div class="upload-zone" id="uploadZone">
-                <div class="upload-zone-icon">📁</div>
-                <div class="upload-zone-text">คลิกเพื่อเลือกไฟล์ JSON</div>
-                <div class="upload-zone-hint">รองรับไฟล์ .json (v4 format)</div>
+            <div class="modal-body">
+                <div class="dropbox-not" id="dropzone">
+                    <div class="dropbox-icon">🗳️</div>
+                    <div style="font-family: var(--font-mono); font-size: 12px; font-weight: bold;">DRAG FILE HERE OR CLICK TO DIRECTORY</div>
+                    <div style="color: var(--text-secondary); font-size: 11px;">*.json formats containing Glyph v4 array structures</div>
+                </div>
+                <input type="file" id="fileLoader" accept=".json" style="display: none;">
+                <textarea class="textarea-not" id="importRawTextarea" placeholder='{"v":4,"frames":[{"d":100,"p":[...]}]}'></textarea>
             </div>
-
-            <div class="divider">หรือวาง JSON code ด้านล่าง</div>
-
-            <textarea class="json-output" id="importTextarea" placeholder='{"v":4,"frames":[{"d":100,"p":[...]}]}'></textarea>
-
             <div class="modal-actions">
-                <button class="btn secondary" id="cancelImportBtn">ยกเลิก</button>
-                <button class="btn success" id="confirmImportBtn">✓ Import</button>
+                <button class="btn-raw" id="cancelImportBtn">CANCEL</button>
+                <button class="btn-raw primary" id="executeImportBtn">LOAD COMPOSITION</button>
             </div>
         </div>
     </div>
 
-    <!-- Export JSON Modal -->
-    <div class="modal" id="jsonModal">
+    <!-- MODAL: EXPORT -->
+    <div class="modal" id="exportModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">📤 Export JSON <span class="info-badge">v4 Format</span></div>
-                <button class="modal-close" id="closeJsonModal">✕</button>
+                <div class="modal-title">EXPORT ENGINE PARSE</div>
+                <button class="modal-close-btn" id="closeExportBtn">✕</button>
             </div>
-            <div class="modal-subtitle">คัดลอก code หรือดาวน์โหลดเป็นไฟล์</div>
-
-            <textarea class="json-output" id="jsonOutput" readonly></textarea>
-
+            <div class="modal-body">
+                <div style="font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono);">
+                    Your composition compiled smoothly. Copy or download below.
+                </div>
+                <textarea class="textarea-not" id="exportRawTextarea" readonly></textarea>
+            </div>
             <div class="modal-actions">
-                <button class="btn" id="copyJsonBtn">📋 คัดลอก</button>
-                <button class="btn primary" id="downloadJsonBtn">💾 ดาวน์โหลด JSON</button>
+                <button class="btn-raw" id="copyCompositionBtn">COPY RAW</button>
+                <button class="btn-raw primary" id="downloadCompositionBtn">SAVE FILE</button>
             </div>
         </div>
     </div>
 
-    <!-- GIF Modal -->
-    <div class="modal" id="gifModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">🎞️ กำลังสร้าง GIF...</div>
-                <button class="modal-close" id="closeGifModal">✕</button>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="progress-text" id="progressText">กำลังเตรียมเฟรม... 0%</div>
-        </div>
+    <!-- GLOBAL HUD TOAST -->
+    <div class="toast-not" id="toast">
+        <div class="toast-dot"></div>
+        <span id="toastMsg" style="font-family: var(--font-mono);">SYSTEM STANDBY</span>
     </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
+    <!-- IIFE IMPLEMENTATION FOR SANDBOX ISOLATION -->
     <script>
-        // Grid configuration
-        const GRID_SIZE = 13;
+        (function() {
+            document.addEventListener('DOMContentLoaded', () => {
+                const GRID_SIZE = 13;
 
-        // Pixel pattern per row (number of active pixels)
-        const ROW_ACTIVE_COUNT = {
-            0: 5, 12: 5,
-            1: 9, 11: 9,
-            2: 11, 3: 11, 9: 11, 10: 11,
-            4: 13, 5: 13, 6: 13, 7: 13, 8: 13
-        };
+                // Absolute count of active/wired LEDs on the Nothing 4A Pro Matrix
+                const ROW_ACTIVE_COUNT = {
+                    0: 5, 12: 5,
+                    1: 9, 11: 9,
+                    2: 11, 3: 11, 9: 11, 10: 11,
+                    4: 13, 5: 13, 6: 13, 7: 13, 8: 13
+                };
 
-        // Build mapping between JSON array index (0-136) and grid position (row, col)
-        function buildPixelMapping() {
-            const mapping = [];
-            let jsonIndex = 0;
-            
-            for (let row = 0; row < GRID_SIZE; row++) {
-                const count = ROW_ACTIVE_COUNT[row];
-                const offset = Math.floor((GRID_SIZE - count) / 2);
-                
-                for (let col = offset; col < offset + count; col++) {
-                    mapping.push({
-                        jsonIndex: jsonIndex,
-                        row: row,
-                        col: col
-                    });
-                    jsonIndex++;
-                }
-            }
-            
-            return mapping;
-        }
-
-        const PIXEL_MAPPING = buildPixelMapping();
-
-        // State
-        let frames = [];
-        let currentFrameIndex = 0;
-        let currentColor = 255;
-        let isDrawing = false;
-        let onionSkinEnabled = false;
-        let isPlaying = false;
-        let playInterval = null;
-        let history = [];
-        let historyIndex = -1;
-
-        // Initialize
-        function init() {
-            createGrid();
-            addFrame();
-            setupEventListeners();
-            updateUI();
-        }
-
-        function isPixelActive(row, col) {
-            const count = ROW_ACTIVE_COUNT[row];
-            if (count === undefined) return false;
-            const offset = Math.floor((GRID_SIZE - count) / 2);
-            return col >= offset && col < offset + count;
-        }
-
-        function createGrid() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
-
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    const pixel = document.createElement('div');
-                    pixel.className = 'pixel';
-                    pixel.dataset.row = row;
-                    pixel.dataset.col = col;
-
-                    if (!isPixelActive(row, col)) {
-                        pixel.classList.add('dead');
-                    } else {
-                        pixel.addEventListener('mousedown', handlePixelClick);
-                        pixel.addEventListener('mouseenter', handlePixelHover);
-                        pixel.addEventListener('contextmenu', handleRightClick);
-                    }
-
-                    grid.appendChild(pixel);
-                }
-            }
-        }
-
-        function handlePixelClick(e) {
-            if (e.button === 2) return;
-            isDrawing = true;
-            const row = parseInt(e.target.dataset.row);
-            const col = parseInt(e.target.dataset.col);
-            paintPixel(row, col);
-        }
-
-        function handlePixelHover(e) {
-            if (!isDrawing) return;
-            const row = parseInt(e.target.dataset.row);
-            const col = parseInt(e.target.dataset.col);
-            paintPixel(row, col);
-        }
-
-        function handleRightClick(e) {
-            e.preventDefault();
-            const row = parseInt(e.target.dataset.row);
-            const col = parseInt(e.target.dataset.col);
-            erasePixel(row, col);
-        }
-
-        function paintPixel(row, col) {
-            if (!isPixelActive(row, col)) return;
-            const frame = frames[currentFrameIndex];
-            const index = row * GRID_SIZE + col;
-            frame.pixels[index] = currentColor;
-            updatePixelDisplay(row, col, currentColor);
-            saveHistory();
-        }
-
-        function erasePixel(row, col) {
-            if (!isPixelActive(row, col)) return;
-            const frame = frames[currentFrameIndex];
-            const index = row * GRID_SIZE + col;
-            frame.pixels[index] = 0;
-            updatePixelDisplay(row, col, 0);
-            saveHistory();
-        }
-
-        function updatePixelDisplay(row, col, value) {
-            const pixel = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-            if (pixel) {
-                const color = `rgb(${value}, ${value}, ${value})`;
-                pixel.style.background = color;
-            }
-        }
-
-        function renderFrame() {
-            const frame = frames[currentFrameIndex];
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        const index = row * GRID_SIZE + col;
-                        updatePixelDisplay(row, col, frame.pixels[index]);
-                    }
-                }
-            }
-            updateFrameThumbnails();
-            updateJsonOutput();
-        }
-
-        function addFrame() {
-            const newFrame = {
-                duration: 100,
-                pixels: new Array(GRID_SIZE * GRID_SIZE).fill(0)
-            };
-            frames.push(newFrame);
-            currentFrameIndex = frames.length - 1;
-            renderFrame();
-            updateUI();
-        }
-
-        function duplicateFrame() {
-            if (frames.length === 0) return;
-            const currentFrame = frames[currentFrameIndex];
-            const newFrame = {
-                duration: currentFrame.duration,
-                pixels: [...currentFrame.pixels]
-            };
-            frames.splice(currentFrameIndex + 1, 0, newFrame);
-            currentFrameIndex++;
-            renderFrame();
-            updateUI();
-        }
-
-        function deleteFrame() {
-            if (frames.length <= 1) {
-                showToast('ต้องมีอย่างน้อย 1 เฟรม');
-                return;
-            }
-            frames.splice(currentFrameIndex, 1);
-            if (currentFrameIndex >= frames.length) {
-                currentFrameIndex = frames.length - 1;
-            }
-            renderFrame();
-            updateUI();
-        }
-
-        function updateFrameThumbnails() {
-            const framesList = document.getElementById('framesList');
-            framesList.innerHTML = '';
-
-            frames.forEach((frame, index) => {
-                const thumb = document.createElement('div');
-                thumb.className = 'frame-thumb';
-                if (index === currentFrameIndex) thumb.classList.add('active');
-
-                const canvas = document.createElement('canvas');
-                canvas.width = GRID_SIZE;
-                canvas.height = GRID_SIZE;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
-
-                for (let row = 0; row < GRID_SIZE; row++) {
-                    for (let col = 0; col < GRID_SIZE; col++) {
-                        if (isPixelActive(row, col)) {
-                            const value = frame.pixels[row * GRID_SIZE + col];
-                            ctx.fillStyle = `rgb(${value}, ${value}, ${value})`;
-                            ctx.fillRect(col, row, 1, 1);
+                // Build mapping between frame export index (137 elements) and grid positions (row, col)
+                function createPixelMapping() {
+                    const mappings = [];
+                    let mappingIndex = 0;
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        const count = ROW_ACTIVE_COUNT[row];
+                        const offset = Math.floor((GRID_SIZE - count) / 2);
+                        for (let col = offset; col < offset + count; col++) {
+                            mappings.push({
+                                linearIndex: mappingIndex,
+                                row: row,
+                                col: col
+                            });
+                            mappingIndex++;
                         }
                     }
+                    return mappings;
                 }
 
-                const frameInfo = document.createElement('div');
-                frameInfo.className = 'frame-info';
+                const PIXEL_MAPPING = createPixelMapping();
 
-                const frameNum = document.createElement('div');
-                frameNum.className = 'frame-number';
-                frameNum.textContent = `F${index + 1}`;
-
-                const durationInput = document.createElement('input');
-                durationInput.type = 'number';
-                durationInput.className = 'frame-duration-input';
-                durationInput.value = frame.duration;
-                durationInput.min = 10;
-                durationInput.max = 10000;
-                durationInput.step = 10;
-                durationInput.title = 'Duration (ms)';
-                durationInput.addEventListener('change', (e) => {
-                    frame.duration = parseInt(e.target.value) || 100;
-                    updateJsonOutput();
-                });
-                durationInput.addEventListener('click', (e) => e.stopPropagation());
-
-                frameInfo.appendChild(frameNum);
-                frameInfo.appendChild(durationInput);
-
-                thumb.appendChild(canvas);
-                thumb.appendChild(frameInfo);
-
-                thumb.addEventListener('click', () => {
-                    currentFrameIndex = index;
-                    renderFrame();
-                    updateUI();
-                });
-
-                framesList.appendChild(thumb);
-            });
-        }
-
-        function updateUI() {
-            document.getElementById('currentFrameDisplay').textContent = 
-                `เฟรมที่ ${currentFrameIndex + 1} / ${frames.length}`;
-            updateFrameThumbnails();
-        }
-
-        function saveHistory() {
-            const frameCopy = {
-                duration: frames[currentFrameIndex].duration,
-                pixels: [...frames[currentFrameIndex].pixels]
-            };
-            history = history.slice(0, historyIndex + 1);
-            history.push({ frameIndex: currentFrameIndex, frame: frameCopy });
-            historyIndex++;
-            if (history.length > 50) {
-                history.shift();
-                historyIndex--;
-            }
-        }
-
-        function undo() {
-            if (historyIndex <= 0) {
-                showToast('ไม่มี undo');
-                return;
-            }
-            historyIndex--;
-            const { frameIndex, frame } = history[historyIndex];
-            currentFrameIndex = frameIndex;
-            frames[currentFrameIndex] = { duration: frame.duration, pixels: [...frame.pixels] };
-            renderFrame();
-            updateUI();
-        }
-
-        function redo() {
-            if (historyIndex >= history.length - 1) {
-                showToast('ไม่มี redo');
-                return;
-            }
-            historyIndex++;
-            const { frameIndex, frame } = history[historyIndex];
-            currentFrameIndex = frameIndex;
-            frames[currentFrameIndex] = { duration: frame.duration, pixels: [...frame.pixels] };
-            renderFrame();
-            updateUI();
-        }
-
-        function clearFrame() {
-            const frame = frames[currentFrameIndex];
-            frame.pixels.fill(0);
-            renderFrame();
-            saveHistory();
-        }
-
-        function fillFrame() {
-            const frame = frames[currentFrameIndex];
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        frame.pixels[row * GRID_SIZE + col] = currentColor;
-                    }
-                }
-            }
-            renderFrame();
-            saveHistory();
-        }
-
-        function invertFrame() {
-            const frame = frames[currentFrameIndex];
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        const i = row * GRID_SIZE + col;
-                        frame.pixels[i] = 255 - frame.pixels[i];
-                    }
-                }
-            }
-            renderFrame();
-            saveHistory();
-        }
-
-        function mirrorFrame() {
-            const frame = frames[currentFrameIndex];
-            const newPixels = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        const mirroredCol = GRID_SIZE - 1 - col;
-                        if (isPixelActive(row, mirroredCol)) {
-                            newPixels[row * GRID_SIZE + mirroredCol] = frame.pixels[row * GRID_SIZE + col];
-                        }
-                    }
-                }
-            }
-            frame.pixels = newPixels;
-            renderFrame();
-            saveHistory();
-        }
-
-        function flipFrame() {
-            const frame = frames[currentFrameIndex];
-            const newPixels = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        const flippedRow = GRID_SIZE - 1 - row;
-                        if (isPixelActive(flippedRow, col)) {
-                            newPixels[flippedRow * GRID_SIZE + col] = frame.pixels[row * GRID_SIZE + col];
-                        }
-                    }
-                }
-            }
-            frame.pixels = newPixels;
-            renderFrame();
-            saveHistory();
-        }
-
-        function rotateFrame() {
-            const frame = frames[currentFrameIndex];
-            const newPixels = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        const newRow = col;
-                        const newCol = GRID_SIZE - 1 - row;
-                        if (isPixelActive(newRow, newCol)) {
-                            newPixels[newRow * GRID_SIZE + newCol] = frame.pixels[row * GRID_SIZE + col];
-                        }
-                    }
-                }
-            }
-            frame.pixels = newPixels;
-            renderFrame();
-            saveHistory();
-        }
-
-        function showTemplate() {
-            const frame = frames[currentFrameIndex];
-            const originalPixels = [...frame.pixels];
-            
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        frame.pixels[row * GRID_SIZE + col] = 128;
-                    }
-                }
-            }
-            renderFrame();
-            
-            setTimeout(() => {
-                frame.pixels = originalPixels;
-                renderFrame();
-            }, 800);
-        }
-
-        function playAnimation() {
-            if (isPlaying) {
-                stopAnimation();
-                return;
-            }
-
-            if (frames.length === 0) return;
-
-            isPlaying = true;
-            document.getElementById('playBtn').textContent = '⏸';
-            let frameIndex = 0;
-            let lastTime = performance.now();
-
-            function animate(currentTime) {
-                if (!isPlaying) return;
-                const frame = frames[frameIndex];
-                const elapsed = currentTime - lastTime;
+                // State Machine (Contained session state - no storage per safety parameters)
+                let frames = [];
+                let currentFrameIndex = 0;
+                let currentColor = 255;
+                let isDrawing = false;
+                let onionSkinEnabled = false;
+                let isPlaying = false;
+                let playTimer = null;
                 
-                if (elapsed >= frame.duration) {
-                    currentFrameIndex = frameIndex;
-                    renderFrame();
-                    updateUI();
-                    lastTime = currentTime;
-                    frameIndex = (frameIndex + 1) % frames.length;
-                }
-                
-                playInterval = requestAnimationFrame(animate);
-            }
+                // History timeline registers for Undo/Redo operations
+                let historyRegistry = [];
+                let historyPointer = -1;
 
-            playInterval = requestAnimationFrame(animate);
-        }
-
-        function stopAnimation() {
-            isPlaying = false;
-            document.getElementById('playBtn').textContent = '▶';
-            if (playInterval) {
-                cancelAnimationFrame(playInterval);
-                playInterval = null;
-            }
-        }
-
-        function exportJSON() {
-            const data = {
-                v: 4,
-                frames: frames.map(frame => {
-                    const activePixels = [];
-                    PIXEL_MAPPING.forEach(({ row, col }) => {
-                        activePixels.push(frame.pixels[row * GRID_SIZE + col]);
-                    });
-                    
-                    return {
-                        d: frame.duration,
-                        p: activePixels
-                    };
-                })
-            };
-            return JSON.stringify(data, null, 2);
-        }
-
-        function importJSON(jsonString) {
-            try {
-                const data = JSON.parse(jsonString);
-                
-                // Support both v:4 and "v ":4 (with spaces in keys)
-                let version = data.v;
-                if (version === undefined) {
-                    // Try to find version key with spaces
-                    const keys = Object.keys(data);
-                    const vKey = keys.find(k => k.trim() === 'v');
-                    if (vKey) version = data[vKey];
-                }
-                
-                if (version !== 4 && version !== '4') {
-                    showToast('ไม่รองรับ JSON version นี้ (ต้องเป็น v4)');
-                    return false;
+                // Application Initialization
+                function applicationStart() {
+                    buildHardwareGrid();
+                    createNewFrame();
+                    registerInteractiveListeners();
+                    updateUIState();
                 }
 
-                let framesData = data.frames;
-                if (!framesData) {
-                    const keys = Object.keys(data);
-                    const fKey = keys.find(k => k.trim() === 'frames');
-                    if (fKey) framesData = data[fKey];
+                // Check active hardware boundaries
+                function computeValidLEDState(row, col) {
+                    const count = ROW_ACTIVE_COUNT[row];
+                    if (count === undefined) return false;
+                    const offset = Math.floor((GRID_SIZE - count) / 2);
+                    return col >= offset && col < offset + count;
                 }
 
-                if (!framesData || !Array.isArray(framesData)) {
-                    showToast('ไม่พบข้อมูล frames ใน JSON');
-                    return false;
-                }
+                // Render Physical Matrix
+                function buildHardwareGrid() {
+                    const matrixGrid = document.getElementById('matrixGrid');
+                    matrixGrid.innerHTML = '';
 
-                frames = framesData.map(frame => {
-                    const pixels = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-                    
-                    // Get frame data with space-tolerant keys
-                    let duration = frame.d;
-                    let pixelData = frame.p;
-                    
-                    if (duration === undefined || pixelData === undefined) {
-                        const keys = Object.keys(frame);
-                        const dKey = keys.find(k => k.trim() === 'd');
-                        const pKey = keys.find(k => k.trim() === 'p');
-                        if (dKey) duration = frame[dKey];
-                        if (pKey) pixelData = frame[pKey];
-                    }
-                    
-                    // Map ค่าจาก JSON array (137 ค่า) ไปยังตำแหน่งที่ถูกต้อง
-                    PIXEL_MAPPING.forEach(({ jsonIndex, row, col }) => {
-                        if (pixelData && jsonIndex < pixelData.length) {
-                            pixels[row * GRID_SIZE + col] = pixelData[jsonIndex];
-                        }
-                    });
-                    
-                    return {
-                        duration: duration || 100,
-                        pixels: pixels
-                    };
-                });
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        for (let col = 0; col < GRID_SIZE; col++) {
+                            const node = document.createElement('div');
+                            node.className = 'led-node';
+                            node.dataset.row = row;
+                            node.dataset.col = col;
 
-                currentFrameIndex = 0;
-                history = [];
-                historyIndex = -1;
-                renderFrame();
-                updateUI();
-                return true;
-            } catch (e) {
-                showToast('เกิดข้อผิดพลาด: ' + e.message);
-                return false;
-            }
-        }
-
-        function updateJsonOutput() {
-            document.getElementById('jsonOutput').value = exportJSON();
-        }
-
-        function copyJson() {
-            const jsonOutput = document.getElementById('jsonOutput');
-            jsonOutput.select();
-            document.execCommand('copy');
-            showToast('คัดลอก JSON แล้ว!');
-        }
-
-        function downloadJson() {
-            const json = exportJSON();
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'glyph_animation.json';
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('ดาวน์โหลด JSON แล้ว!');
-        }
-
-        function handleImportFromTextarea() {
-            const textarea = document.getElementById('importTextarea');
-            const jsonString = textarea.value.trim();
-            
-            if (!jsonString) {
-                showToast('กรุณาใส่ JSON code หรือเลือกไฟล์');
-                return;
-            }
-
-            const success = importJSON(jsonString);
-            if (success) {
-                document.getElementById('importModal').classList.remove('active');
-                textarea.value = '';
-                showToast('นำเข้า JSON สำเร็จ!');
-            }
-        }
-
-        function handleImportFromFile(file) {
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const success = importJSON(event.target.result);
-                if (success) {
-                    document.getElementById('importModal').classList.remove('active');
-                    document.getElementById('importTextarea').value = '';
-                    showToast('นำเข้าไฟล์ JSON สำเร็จ!');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        async function exportGIF() {
-            const modal = document.getElementById('gifModal');
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-            
-            modal.classList.add('active');
-
-            for (let i = 0; i <= 100; i += 10) {
-                progressFill.style.width = i + '%';
-                progressText.textContent = `กำลังสร้าง GIF... ${i}%`;
-                await new Promise(resolve => setTimeout(resolve, 150));
-            }
-
-            modal.classList.remove('active');
-            showToast('ส่งออก GIF สำเร็จ! (Demo)');
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function setupEventListeners() {
-            // Color slider - step 10, but snap to 255 when >= 250
-            document.getElementById('colorSlider').addEventListener('input', (e) => {
-                let value = parseInt(e.target.value);
-                // ถ้าค่า >= 250 ให้เป็น 255
-                if (value >= 250) {
-                    value = 255;
-                    e.target.value = 255;
-                }
-                currentColor = value;
-                document.getElementById('colorNumberInput').value = value;
-                document.getElementById('colorPreview').style.background = 
-                    `rgb(${value}, ${value}, ${value})`;
-            });
-
-            // Color number input - custom value 0-255
-            document.getElementById('colorNumberInput').addEventListener('input', (e) => {
-                let value = parseInt(e.target.value);
-                if (isNaN(value)) return;
-                value = Math.max(0, Math.min(255, value));
-                currentColor = value;
-                document.getElementById('colorSlider').value = value;
-                document.getElementById('colorPreview').style.background = 
-                    `rgb(${value}, ${value}, ${value})`;
-            });
-
-            document.getElementById('colorNumberInput').addEventListener('change', (e) => {
-                let value = parseInt(e.target.value);
-                if (isNaN(value)) {
-                    value = currentColor;
-                } else {
-                    value = Math.max(0, Math.min(255, value));
-                }
-                e.target.value = value;
-                currentColor = value;
-                document.getElementById('colorSlider').value = value;
-                document.getElementById('colorPreview').style.background = 
-                    `rgb(${value}, ${value}, ${value})`;
-            });
-
-            // Canvas tools
-            document.getElementById('undoBtn').addEventListener('click', undo);
-            document.getElementById('redoBtn').addEventListener('click', redo);
-            document.getElementById('clearBtn').addEventListener('click', clearFrame);
-
-            // Transform tools
-            document.getElementById('fillBtn').addEventListener('click', fillFrame);
-            document.getElementById('invertBtn').addEventListener('click', invertFrame);
-            document.getElementById('mirrorBtn').addEventListener('click', mirrorFrame);
-            document.getElementById('flipBtn').addEventListener('click', flipFrame);
-            document.getElementById('rotateBtn').addEventListener('click', rotateFrame);
-            document.getElementById('showTemplateBtn').addEventListener('click', showTemplate);
-
-            // Frames
-            document.getElementById('addFrameBtn').addEventListener('click', addFrame);
-            document.getElementById('duplicateFrameBtn').addEventListener('click', duplicateFrame);
-            document.getElementById('deleteFrameBtn').addEventListener('click', deleteFrame);
-
-            // Playback
-            document.getElementById('playBtn').addEventListener('click', playAnimation);
-
-            // Onion skin
-            document.getElementById('onionToggle').addEventListener('click', function() {
-                this.classList.toggle('active');
-                onionSkinEnabled = this.classList.contains('active');
-                if (onionSkinEnabled) {
-                    renderOnionSkin();
-                } else {
-                    renderFrame();
-                }
-            });
-
-            // Import - Open modal
-            document.getElementById('importBtn').addEventListener('click', () => {
-                document.getElementById('importTextarea').value = '';
-                openModal('importModal');
-            });
-
-            // Import - Upload zone click
-            document.getElementById('uploadZone').addEventListener('click', () => {
-                document.getElementById('fileInput').click();
-            });
-
-            // Import - File input change
-            document.getElementById('fileInput').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    handleImportFromFile(file);
-                }
-                e.target.value = '';
-            });
-
-            // Import - Drag and drop
-            const uploadZone = document.getElementById('uploadZone');
-            uploadZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadZone.style.borderColor = '#667eea';
-                uploadZone.style.background = '#1a1a2e';
-            });
-            uploadZone.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                uploadZone.style.borderColor = '#3a3a3a';
-                uploadZone.style.background = '#0f0f0f';
-            });
-            uploadZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadZone.style.borderColor = '#3a3a3a';
-                uploadZone.style.background = '#0f0f0f';
-                const file = e.dataTransfer.files[0];
-                if (file && file.name.endsWith('.json')) {
-                    handleImportFromFile(file);
-                } else {
-                    showToast('กรุณาเลือกไฟล์ .json');
-                }
-            });
-
-            // Import - Confirm button
-            document.getElementById('confirmImportBtn').addEventListener('click', handleImportFromTextarea);
-
-            // Import - Cancel button
-            document.getElementById('cancelImportBtn').addEventListener('click', () => {
-                closeModal('importModal');
-            });
-
-            // Import - Close button
-            document.getElementById('closeImportModal').addEventListener('click', () => {
-                closeModal('importModal');
-            });
-
-            // Export - Open modal
-            document.getElementById('exportBtn').addEventListener('click', () => {
-                updateJsonOutput();
-                openModal('jsonModal');
-            });
-
-            document.getElementById('closeJsonModal').addEventListener('click', () => {
-                closeModal('jsonModal');
-            });
-
-            document.getElementById('copyJsonBtn').addEventListener('click', copyJson);
-            document.getElementById('downloadJsonBtn').addEventListener('click', downloadJson);
-
-            // GIF
-            document.getElementById('exportGifBtn').addEventListener('click', exportGIF);
-            document.getElementById('closeGifModal').addEventListener('click', () => {
-                closeModal('gifModal');
-            });
-
-            // Global events
-            document.addEventListener('mouseup', () => {
-                isDrawing = false;
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'z') {
-                    e.preventDefault();
-                    undo();
-                }
-                if (e.ctrlKey && e.key === 'y') {
-                    e.preventDefault();
-                    redo();
-                }
-            });
-
-            // Close modal on outside click
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.classList.remove('active');
-                    }
-                });
-            });
-
-            // Close modal on Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('.modal.active').forEach(modal => {
-                        modal.classList.remove('active');
-                    });
-                }
-            });
-        }
-
-        function renderOnionSkin() {
-            if (!onionSkinEnabled || currentFrameIndex === 0) {
-                renderFrame();
-                return;
-            }
-
-            const prevFrame = frames[currentFrameIndex - 1];
-            const currentFrame = frames[currentFrameIndex];
-
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (isPixelActive(row, col)) {
-                        const index = row * GRID_SIZE + col;
-                        const currentValue = currentFrame.pixels[index];
-                        const prevValue = prevFrame.pixels[index];
-
-                        if (currentValue > 0) {
-                            updatePixelDisplay(row, col, currentValue);
-                        } else if (prevValue > 0) {
-                            const pixel = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                            if (pixel) {
-                                pixel.style.background = `rgba(${prevValue}, ${prevValue}, ${prevValue}, 0.3)`;
+                            if (!computeValidLEDState(row, col)) {
+                                node.classList.add('null-zone');
+                            } else {
+                                node.addEventListener('mousedown', initiateActiveDraw);
+                                node.addEventListener('mouseenter', continueActiveDraw);
+                                node.addEventListener('contextmenu', deleteLEDDraw);
                             }
-                        } else {
-                            updatePixelDisplay(row, col, 0);
+                            matrixGrid.appendChild(node);
                         }
                     }
                 }
-            }
-        }
 
-        // Initialize app
-        init();
+                function initiateActiveDraw(e) {
+                    if (e.button === 2) return;
+                    isDrawing = true;
+                    paintTargetLED(parseInt(this.dataset.row), parseInt(this.dataset.col));
+                }
+
+                function continueActiveDraw(e) {
+                    if (!isDrawing) return;
+                    paintTargetLED(parseInt(this.dataset.row), parseInt(this.dataset.col));
+                }
+
+                function deleteLEDDraw(e) {
+                    e.preventDefault();
+                    eraseTargetLED(parseInt(this.dataset.row), parseInt(this.dataset.col));
+                }
+
+                function paintTargetLED(row, col) {
+                    if (!computeValidLEDState(row, col)) return;
+                    const frame = frames[currentFrameIndex];
+                    const matrixLinearPointer = row * GRID_SIZE + col;
+                    frame.pixels[matrixLinearPointer] = currentColor;
+                    renderNodeUpdate(row, col, currentColor);
+                    preserveCompositionHistory();
+                }
+
+                function eraseTargetLED(row, col) {
+                    if (!computeValidLEDState(row, col)) return;
+                    const frame = frames[currentFrameIndex];
+                    const matrixLinearPointer = row * GRID_SIZE + col;
+                    frame.pixels[matrixLinearPointer] = 0;
+                    renderNodeUpdate(row, col, 0);
+                    preserveCompositionHistory();
+                }
+
+                function renderNodeUpdate(row, col, rawLumStrength) {
+                    const node = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                    if (node) {
+                        if (rawLumStrength > 0) {
+                            node.classList.add('lit');
+                            node.style.backgroundColor = `rgba(${rawLumStrength}, ${rawLumStrength}, ${rawLumStrength}, 1)`;
+                            node.style.boxShadow = `0 0 14px rgba(${rawLumStrength}, ${rawLumStrength}, ${rawLumStrength}, .8)`;
+                        } else {
+                            node.classList.remove('lit');
+                            node.style.backgroundColor = '';
+                            node.style.boxShadow = '';
+                        }
+                    }
+                }
+
+                function displayFrameCanvas() {
+                    const frame = frames[currentFrameIndex];
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        for (let col = 0; col < GRID_SIZE; col++) {
+                            if (computeValidLEDState(row, col)) {
+                                const matrixLinearPointer = row * GRID_SIZE + col;
+                                renderNodeUpdate(row, col, frame.pixels[matrixLinearPointer]);
+                            }
+                        }
+                    }
+                    if (onionSkinEnabled) renderOnionGhost();
+                    rebuildMiniThumbnails();
+                }
+
+                function createNewFrame() {
+                    const emptyFrame = {
+                        duration: 100,
+                        pixels: new Array(GRID_SIZE * GRID_SIZE).fill(0)
+                    };
+                    frames.push(emptyFrame);
+                    currentFrameIndex = frames.length - 1;
+                    displayFrameCanvas();
+                    updateUIState();
+                }
+
+                function cloneActiveFrame() {
+                    if (frames.length === 0) return;
+                    const parentFrame = frames[currentFrameIndex];
+                    const clonedDetails = {
+                        duration: parentFrame.duration,
+                        pixels: [...parentFrame.pixels]
+                    };
+                    frames.splice(currentFrameIndex + 1, 0, clonedDetails);
+                    currentFrameIndex++;
+                    displayFrameCanvas();
+                    updateUIState();
+                    renderOSNotification("DUPLICATED CURRENT FRAME");
+                }
+
+                function deleteActiveFrame() {
+                    if (frames.length <= 1) {
+                        renderOSNotification("CANNOT PURGE LAST FRAME");
+                        return;
+                    }
+                    frames.splice(currentFrameIndex, 1);
+                    if (currentFrameIndex >= frames.length) {
+                        currentFrameIndex = frames.length - 1;
+                    }
+                    displayFrameCanvas();
+                    updateUIState();
+                    renderOSNotification("FRAME DELETED");
+                }
+
+                function rebuildMiniThumbnails() {
+                    const wrapper = document.getElementById('framesContainer');
+                    wrapper.innerHTML = '';
+
+                    frames.forEach((frame, idx) => {
+                        const cell = document.createElement('div');
+                        cell.className = `frame-card ${idx === currentFrameIndex ? 'active' : ''}`;
+
+                        const drawWrap = document.createElement('div');
+                        drawWrap.className = 'thumbnail-wrapper';
+
+                        const miniCanvas = document.createElement('canvas');
+                        miniCanvas.width = GRID_SIZE;
+                        miniCanvas.height = GRID_SIZE;
+                        const renderer = miniCanvas.getContext('2d');
+                        renderer.fillStyle = '#0a0a0a';
+                        renderer.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
+
+                        for (let r = 0; r < GRID_SIZE; r++) {
+                            for (let c = 0; c < GRID_SIZE; c++) {
+                                if (computeValidLEDState(r, c)) {
+                                    const lum = frame.pixels[r * GRID_SIZE + c];
+                                    if (lum > 0) {
+                                        renderer.fillStyle = `rgb(${lum}, ${lum}, ${lum})`;
+                                        renderer.fillRect(c, r, 1, 1);
+                                    }
+                                }
+                            }
+                        }
+                        drawWrap.appendChild(miniCanvas);
+
+                        const labels = document.createElement('div');
+                        labels.className = 'frame-card-details';
+
+                        const orderNo = document.createElement('div');
+                        orderNo.className = 'frame-card-name';
+                        orderNo.textContent = `F${(idx+1).toString().padStart(2, '0')}`;
+
+                        const metas = document.createElement('div');
+                        metas.className = 'frame-card-meta';
+
+                        const durLabel = document.createElement('span');
+                        durLabel.className = 'ms-badge';
+                        durLabel.textContent = `${frame.duration}ms`;
+
+                        metas.appendChild(durLabel);
+                        labels.appendChild(orderNo);
+                        labels.appendChild(metas);
+
+                        const frameDelayField = document.createElement('input');
+                        frameDelayField.type = 'number';
+                        frameDelayField.className = 'frame-card-duration-input';
+                        frameDelayField.value = frame.duration;
+                        frameDelayField.min = 10;
+                        frameDelayField.max = 9999;
+                        frameDelayField.addEventListener('change', (e) => {
+                            let durVal = parseInt(e.target.value) || 120;
+                            frame.duration = Math.max(10, Math.min(9999, durVal));
+                            durLabel.textContent = `${frame.duration}ms`;
+                        });
+                        frameDelayField.addEventListener('click', (e) => e.stopPropagation());
+
+                        cell.appendChild(drawWrap);
+                        cell.appendChild(labels);
+                        cell.appendChild(frameDelayField);
+
+                        cell.addEventListener('click', () => {
+                            currentFrameIndex = idx;
+                            displayFrameCanvas();
+                            updateUIState();
+                        });
+
+                        wrapper.appendChild(cell);
+                    });
+                }
+
+                function updateUIState() {
+                    document.getElementById('currentFrameBadge').textContent = (currentFrameIndex + 1).toString().padStart(2, '0');
+                    document.getElementById('totalFramesBadge').textContent = frames.length.toString().padStart(2, '0');
+                }
+
+                // Composition Timeline History Save
+                function preserveCompositionHistory() {
+                    const snap = {
+                        duration: frames[currentFrameIndex].duration,
+                        pixels: [...frames[currentFrameIndex].pixels]
+                    };
+                    historyRegistry = historyRegistry.slice(0, historyPointer + 1);
+                    historyRegistry.push({ idx: currentFrameIndex, instance: snap });
+                    historyPointer++;
+                    if (historyRegistry.length > 30) {
+                        historyRegistry.shift();
+                        historyPointer--;
+                    }
+                }
+
+                // Global Matrix Modifiers
+                function fillWiredHardware() {
+                    const activeFrame = frames[currentFrameIndex];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                activeFrame.pixels[r * GRID_SIZE + c] = currentColor;
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("MATRIX INTENSITY MAXIMIZED");
+                }
+
+                function invertActiveWired() {
+                    const activeFrame = frames[currentFrameIndex];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const idx = r * GRID_SIZE + c;
+                                activeFrame.pixels[idx] = 255 - activeFrame.pixels[idx];
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("MATRIX INVERTED");
+                }
+
+                function mirrorActiveHardware() {
+                    const activeFrame = frames[currentFrameIndex];
+                    const temp = [...activeFrame.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const mirroredCol = GRID_SIZE - 1 - c;
+                                if (computeValidLEDState(r, mirroredCol)) {
+                                    activeFrame.pixels[r * GRID_SIZE + mirroredCol] = temp[r * GRID_SIZE + c];
+                                }
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("MIRRORED SYMMETRY ENFORCED");
+                }
+
+                function flipActiveHardware() {
+                    const activeFrame = frames[currentFrameIndex];
+                    const temp = [...activeFrame.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const flippedRow = GRID_SIZE - 1 - r;
+                                if (computeValidLEDState(flippedRow, c)) {
+                                    activeFrame.pixels[flippedRow * GRID_SIZE + c] = temp[r * GRID_SIZE + c];
+                                }
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("VERTICAL FLIP");
+                }
+
+                function rotateActiveHardware() {
+                    const activeFrame = frames[currentFrameIndex];
+                    const temp = [...activeFrame.pixels];
+                    const rotated = new Array(GRID_SIZE * GRID_SIZE).fill(0);
+                    
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const newRow = c;
+                                const newCol = GRID_SIZE - 1 - r;
+                                if (computeValidLEDState(newRow, newCol)) {
+                                    rotated[newRow * GRID_SIZE + newCol] = temp[r * GRID_SIZE + c];
+                                }
+                            }
+                        }
+                    }
+                    activeFrame.pixels = rotated;
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("ROTATE 90° CW");
+                }
+
+                function clearActiveFrame() {
+                    const activeFrame = frames[currentFrameIndex];
+                    activeFrame.pixels.fill(0);
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                }
+
+                function triggerLEDTestPulse() {
+                    const frame = frames[currentFrameIndex];
+                    const tempRecord = [...frame.pixels];
+                    
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        for (let col = 0; col < GRID_SIZE; col++) {
+                            if (computeValidLEDState(row, col)) {
+                                frame.pixels[row * GRID_SIZE + col] = 255;
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    renderOSNotification("PULSATOR CALIBRATING...");
+                    
+                    setTimeout(() => {
+                        frame.pixels = tempRecord;
+                        displayFrameCanvas();
+                    }, 500);
+                }
+
+                // Frame-by-Frame playback animator engine
+                function toggleSequencerState() {
+                    if (isPlaying) {
+                        ceaseSequencer();
+                        return;
+                    }
+
+                    if (frames.length === 0) return;
+
+                    isPlaying = true;
+                    document.getElementById('playBtn').textContent = '⏸';
+                    document.getElementById('playBtn').style.backgroundColor = 'var(--accent-red)';
+                    document.getElementById('playBtn').style.color = '#fff';
+                    renderOSNotification("SEQUENCER TRANSMITTING");
+
+                    let frameTimerSequence = 0;
+                    function engineTick() {
+                        if (!isPlaying) return;
+                        currentFrameIndex = frameTimerSequence;
+                        displayFrameCanvas();
+                        updateUIState();
+                        
+                        const currentFrameDuration = frames[frameTimerSequence].duration || 100;
+                        playTimer = setTimeout(() => {
+                            frameTimerSequence = (frameTimerSequence + 1) % frames.length;
+                            engineTick();
+                        }, currentFrameDuration);
+                    }
+                    engineTick();
+                }
+
+                function ceaseSequencer() {
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶';
+                    document.getElementById('playBtn').style.backgroundColor = 'var(--text-primary)';
+                    document.getElementById('playBtn').style.color = 'var(--bg-pure)';
+                    renderOSNotification("SEQUENCER IDLE");
+                    if (playTimer) {
+                        clearTimeout(playTimer);
+                        playTimer = null;
+                    }
+                }
+
+                // ONION SKIN LAYERING (Emulates analog trace animations)
+                function renderOnionGhost() {
+                    if (!onionSkinEnabled || currentFrameIndex === 0) return;
+
+                    const precedingNodeFrame = frames[currentFrameIndex - 1];
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        for (let col = 0; col < GRID_SIZE; col++) {
+                            if (computeValidLEDState(row, col)) {
+                                const matrixIndex = row * GRID_SIZE + col;
+                                const activeValue = frames[currentFrameIndex].pixels[matrixIndex];
+                                const traceValue = precedingNodeFrame.pixels[matrixIndex];
+
+                                if (activeValue === 0 && traceValue > 0) {
+                                    const node = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                                    if (node) {
+                                        // Yield faint red color glow for tracing preceding frame
+                                        node.style.backgroundColor = `rgba(255, 59, 48, 0.25)`;
+                                        node.style.boxShadow = `inset 0 0 4px rgba(255, 59, 48, 0.4)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // COMPILER IO: V4 COMPLIANT SPEC
+                function parseCompositionToV4() {
+                    const output = {
+                        v: 4,
+                        frames: frames.map(f => {
+                            const serializedData = [];
+                            PIXEL_MAPPING.forEach(({ row, col }) => {
+                                serializedData.push(f.pixels[row * GRID_SIZE + col]);
+                            });
+                            return {
+                                d: f.duration,
+                                p: serializedData
+                            };
+                        })
+                    };
+                    return JSON.stringify(output);
+                }
+
+                function loadV4Composition(jsonCode) {
+                    try {
+                        const parsed = JSON.parse(jsonCode);
+                        let verifiedVer = parsed.v;
+                        if (verifiedVer === undefined) {
+                            const findAlternativeKeys = Object.keys(parsed);
+                            const keyMatch = findAlternativeKeys.find(k => k.trim() === 'v');
+                            if (keyMatch) verifiedVer = parsed[keyMatch];
+                        }
+
+                        if (Number(verifiedVer) !== 4) {
+                            renderOSNotification("LOAD REJECTED: REQUIRES V4 SOURCE");
+                            return false;
+                        }
+
+                        let targetFrames = parsed.frames;
+                        if (!targetFrames) {
+                            const keys = Object.keys(parsed);
+                            const foundKey = keys.find(k => k.trim() === 'frames');
+                            if (foundKey) targetFrames = parsed[foundKey];
+                        }
+
+                        if (!targetFrames || !Array.isArray(targetFrames)) {
+                            renderOSNotification("LOAD ERROR: STRUCT DISCREPANCY");
+                            return false;
+                        }
+
+                        frames = targetFrames.map(nodeRawFrame => {
+                            const reconstructedMap = new Array(GRID_SIZE * GRID_SIZE).fill(0);
+                            let durRaw = nodeRawFrame.d;
+                            let pMapArray = nodeRawFrame.p;
+
+                            if (durRaw === undefined || pMapArray === undefined) {
+                                const keys = Object.keys(nodeRawFrame);
+                                const dKey = keys.find(k => k.trim() === 'd');
+                                const pKey = keys.find(k => k.trim() === 'p');
+                                if (dKey) durRaw = nodeRawFrame[dKey];
+                                if (pKey) pMapArray = nodeRawFrame[pKey];
+                            }
+
+                            PIXEL_MAPPING.forEach(({ linearIndex, row, col }) => {
+                                if (pMapArray && linearIndex < pMapArray.length) {
+                                    reconstructedMap[row * GRID_SIZE + col] = pMapArray[linearIndex];
+                                }
+                            });
+
+                            return {
+                                duration: durRaw || 100,
+                                pixels: reconstructedMap
+                            };
+                        });
+
+                        currentFrameIndex = 0;
+                        historyRegistry = [];
+                        historyPointer = -1;
+                        displayFrameCanvas();
+                        updateUIState();
+                        renderOSNotification("SOURCE RECONSTRUCTION STABLE");
+                        return true;
+                    } catch (err) {
+                        renderOSNotification("PARSING ERROR: INVALID JSON");
+                        return false;
+                    }
+                }
+
+                // NOTIFIER SYSTEM (HUD Widget design)
+                function renderOSNotification(status) {
+                    const notifyHUD = document.getElementById('toast');
+                    const labelHUD = document.getElementById('toastMsg');
+                    labelHUD.textContent = status.toUpperCase();
+                    notifyHUD.classList.add('active');
+                    setTimeout(() => notifyHUD.classList.remove('active'), 2500);
+                }
+
+                // EVENT REGISTRIES
+                function registerInteractiveListeners() {
+                    // Interaction control triggers
+                    document.getElementById('addFrameBtn').addEventListener('click', createNewFrame);
+                    document.getElementById('cloneFrameBtn').addEventListener('click', cloneActiveFrame);
+                    document.getElementById('deleteFrameBtn').addEventListener('click', deleteActiveFrame);
+                    
+                    document.getElementById('playBtn').addEventListener('click', toggleSequencerState);
+                    
+                    document.getElementById('onionToggle').addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        onionSkinEnabled = this.classList.contains('active');
+                        displayFrameCanvas();
+                    });
+
+                    // Slider triggers
+                    const colSlider = document.getElementById('colorSlider');
+                    const colInput = document.getElementById('colorInput');
+                    const previewNode = document.getElementById('colorPreview');
+
+                    function changeLocalActiveColor(intensity) {
+                        currentColor = Math.max(0, Math.min(255, intensity));
+                        colSlider.value = currentColor;
+                        colInput.value = currentColor;
+                        previewNode.style.backgroundColor = `rgb(${currentColor}, ${currentColor}, ${currentColor})`;
+                        previewNode.style.boxShadow = `0 0 14px rgba(${currentColor}, ${currentColor}, ${currentColor}, 0.8)`;
+                    }
+
+                    colSlider.addEventListener('input', (e) => {
+                        let stepVal = parseInt(e.target.value);
+                        if (stepVal >= 250) stepVal = 255; // Force raw maximum brightness limit
+                        changeLocalActiveColor(stepVal);
+                    });
+
+                    colInput.addEventListener('change', (e) => {
+                        let fieldVal = parseInt(e.target.value) || 0;
+                        changeLocalActiveColor(fieldVal);
+                    });
+
+                    // FPS Adjusters
+                    const fpsSlider = document.getElementById('fpsSlider');
+                    const fpsInput = document.getElementById('fpsInput');
+
+                    fpsSlider.addEventListener('input', (e) => {
+                        const targetFPS = parseInt(e.target.value);
+                        fpsInput.value = targetFPS;
+                        frames.forEach(f => f.duration = Math.round(1000 / targetFPS));
+                        rebuildMiniThumbnails();
+                    });
+
+                    fpsInput.addEventListener('change', (e) => {
+                        const targetFPS = Math.max(1, Math.min(60, parseInt(e.target.value) || 8));
+                        fpsInput.value = targetFPS;
+                        fpsSlider.value = targetFPS;
+                        frames.forEach(f => f.duration = Math.round(1000 / targetFPS));
+                        rebuildMiniThumbnails();
+                    });
+
+                    // Transform mod bindings
+                    document.getElementById('fillBtn').addEventListener('click', fillWiredHardware);
+                    document.getElementById('invertBtn').addEventListener('click', invertActiveWired);
+                    document.getElementById('mirrorBtn').addEventListener('click', mirrorActiveHardware);
+                    document.getElementById('flipBtn').addEventListener('click', flipActiveHardware);
+                    document.getElementById('rotateBtn').addEventListener('click', rotateActiveHardware);
+                    document.getElementById('clearBtn').addEventListener('click', clearActiveFrame);
+                    document.getElementById('flashTemplateBtn').addEventListener('click', triggerLEDTestPulse);
+
+                    // Import/Export Modal controls
+                    const importModal = document.getElementById('importModal');
+                    const exportModal = document.getElementById('exportModal');
+
+                    document.getElementById('importModalTrigger').addEventListener('click', () => {
+                        document.getElementById('importRawTextarea').value = '';
+                        importModal.classList.add('active');
+                    });
+
+                    document.getElementById('exportModalTrigger').addEventListener('click', () => {
+                        const payload = parseCompositionToV4();
+                        document.getElementById('exportRawTextarea').value = payload;
+                        exportModal.classList.add('active');
+                    });
+
+                    document.getElementById('closeImportBtn').addEventListener('click', () => {
+                        importModal.classList.remove('active');
+                    });
+                    document.getElementById('cancelImportBtn').addEventListener('click', () => {
+                        importModal.classList.remove('active');
+                    });
+
+                    document.getElementById('closeExportBtn').addEventListener('click', () => {
+                        exportModal.classList.remove('active');
+                    });
+
+                    // Composition loading trigger
+                    document.getElementById('executeImportBtn').addEventListener('click', () => {
+                        const strInput = document.getElementById('importRawTextarea').value;
+                        if (loadV4Composition(strInput)) {
+                            importModal.classList.remove('active');
+                        }
+                    });
+
+                    // Drag & Drop
+                    const dropRegion = document.getElementById('dropzone');
+                    const fileLoader = document.getElementById('fileLoader');
+
+                    dropRegion.addEventListener('click', () => fileLoader.click());
+                    fileLoader.addEventListener('change', (e) => {
+                        const f = e.target.files[0];
+                        if (f) performLocalFileExtraction(f);
+                    });
+
+                    dropRegion.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        dropRegion.style.borderColor = '#ffffff';
+                        dropRegion.style.background = '#121212';
+                    });
+
+                    dropRegion.addEventListener('dragleave', () => {
+                        dropRegion.style.borderColor = 'var(--border-primary)';
+                        dropRegion.style.background = 'var(--bg-widget)';
+                    });
+
+                    dropRegion.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        dropRegion.style.borderColor = 'var(--border-primary)';
+                        dropRegion.style.background = 'var(--bg-widget)';
+                        const f = e.dataTransfer.files[0];
+                        if (f && f.name.endsWith('.json')) {
+                            performLocalFileExtraction(f);
+                        } else {
+                            renderOSNotification("ONLY .JSON STRUCTURES ACCEPTED");
+                        }
+                    });
+
+                    function performLocalFileExtraction(file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            if (loadV4Composition(event.target.result)) {
+                                importModal.classList.remove('active');
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+
+                    // Composition Clipboard copy & File writing ops
+                    document.getElementById('copyCompositionBtn').addEventListener('click', () => {
+                        const rawComponent = document.getElementById('exportRawTextarea');
+                        rawComponent.select();
+                        document.execCommand('copy');
+                        renderOSNotification("COMPOSITION COPIED TO SYSTEM CLIPBOARD");
+                    });
+
+                    document.getElementById('downloadCompositionBtn').addEventListener('click', () => {
+                        const stream = parseCompositionToV4();
+                        const blobStream = new Blob([stream], { type: 'application/json' });
+                        const systemURL = URL.createObjectURL(blobStream);
+                        const anchor = document.createElement('a');
+                        anchor.href = systemURL;
+                        anchor.download = 'nothing_matrix_pulse.json';
+                        anchor.click();
+                        URL.revokeObjectURL(systemURL);
+                        renderOSNotification("JSON PAYLOAD EXPORTED");
+                    });
+
+                    // Universal Document events (Mouse hold safety features)
+                    document.addEventListener('mouseup', () => {
+                        isDrawing = false;
+                    });
+
+                    // Block drag artifacts
+                    document.addEventListener('dragstart', (e) => {
+                        e.preventDefault();
+                    });
+                }
+
+                applicationStart();
+            });
+        })();
     </script>
 </body>
 </html>
-
