@@ -770,6 +770,63 @@
             background-color: var(--bg-widget);
         }
 
+        /* KILL SWITCH - DO OVER BUTTON */
+.btn-kill-switch {
+    background: linear-gradient(180deg, #8b0000 0%, #5c0000 100%);
+    border: 3px solid #ff0000;
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 900;
+    padding: 16px 24px;
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    margin: 0 auto;
+}
+
+        .btn-kill-switch::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-kill-switch:hover::before {
+            left: 100%;
+        }
+
+        .btn-kill-switch:hover {
+            background: linear-gradient(180deg, #a00000 0%, #6c0000 100%);
+            border-color: #ff3333;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-kill-switch:active {
+            transform: translateY(0);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .kill-switch-icon {
+            font-size: 18px;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+        }
+
         /* MODAL STYLING (NOT-OS FLOATING CARD) */
         .modal {
             position: fixed;
@@ -1074,6 +1131,21 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <button class="btn-raw secondary" id="flashTemplateBtn" style="width: 100%;">FLASH HARDWARE SEGMENTS</button>
+                    </div>
+                </div>
+
+                <!-- NEW: DO OVER KILL SWITCH WIDGET -->
+                <div class="widget">
+                    <div class="widget-title">
+                        SYSTEM RESET
+                        <span class="dot-indicator"></span>
+                    </div>
+                    <button class="btn-kill-switch" id="doOverBtn">
+                        <span class="kill-switch-icon">⚠️</span>
+                        <span>DO OVER</span>
+                    </button>
+                    <div style="font-size: 10px; color: var(--text-secondary); text-align: center; margin-top: 10px; font-family: var(--font-mono);">
+                        ERASES ALL DATA & RESTARTS SESSION
                     </div>
                 </div>
 
@@ -1551,6 +1623,56 @@
                     }, 500);
                 }
 
+                // DO OVER - Complete System Reset
+                function doOverReset() {
+                    if (!confirm('⚠️ WARNING: This will erase ALL frames and data.\n\nAre you sure you want to start over?')) {
+                        return;
+                    }
+
+                    // Stop playback if running
+                    if (isPlaying) {
+                        ceaseSequencer();
+                    }
+
+                    // Clear all state
+                    frames = [];
+                    currentFrameIndex = 0;
+                    historyRegistry = [];
+                    historyPointer = -1;
+                    onionSkinEnabled = false;
+                    
+                    // Reset onion skin toggle UI
+                    const onionToggle = document.getElementById('onionToggle');
+                    if (onionToggle) {
+                        onionToggle.classList.remove('active');
+                    }
+
+                    // Reset color to default
+                    currentColor = 255;
+                    const colSlider = document.getElementById('colorSlider');
+                    const colInput = document.getElementById('colorInput');
+                    const previewNode = document.getElementById('colorPreview');
+                    
+                    if (colSlider) colSlider.value = 255;
+                    if (colInput) colInput.value = 255;
+                    if (previewNode) {
+                        previewNode.style.backgroundColor = 'rgb(255, 255, 255)';
+                        previewNode.style.boxShadow = '0 0 14px rgba(255, 255, 255, 0.8)';
+                    }
+
+                    // Reset FPS to default
+                    const fpsSlider = document.getElementById('fpsSlider');
+                    const fpsInput = document.getElementById('fpsInput');
+                    
+                    if (fpsSlider) fpsSlider.value = DEFAULT_FPS;
+                    if (fpsInput) fpsInput.value = DEFAULT_FPS;
+
+                    // Create fresh frame
+                    createNewFrame();
+                    
+                    renderOSNotification("SYSTEM RESET COMPLETE - FRESH SESSION");
+                }
+
                 // Frame-by-Frame playback animator engine
                 function toggleSequencerState() {
                     if (isPlaying) {
@@ -1772,6 +1894,9 @@
                     document.getElementById('rotateBtn').addEventListener('click', rotateActiveHardware);
                     document.getElementById('clearBtn').addEventListener('click', clearActiveFrame);
                     document.getElementById('flashTemplateBtn').addEventListener('click', triggerLEDTestPulse);
+
+                    // DO OVER KILL SWITCH
+                    document.getElementById('doOverBtn').addEventListener('click', doOverReset);
 
                     const importModal = document.getElementById('importModal');
                     const exportModal = document.getElementById('exportModal');
