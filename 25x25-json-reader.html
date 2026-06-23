@@ -44,6 +44,7 @@
             letter-spacing: -0.02em;
         }
 
+        /* Ambient Nothing Background Track Lines */
         body::before {
             content: '';
             position: fixed;
@@ -70,18 +71,22 @@
             gap: 24px;
         }
 
+        /* HEADER & BRANDING */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed var(--border-primary);
             padding-bottom: 16px;
+            position: relative;
+            min-height: 48px;
         }
 
         .brand-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
+            z-index: 2;
         }
 
         .brand-title {
@@ -98,6 +103,7 @@
             font-family: var(--font-doto);
         }
 
+        /* Nothing-style red dot */
         .brand-active-dot {
             width: 10px;
             height: 10px;
@@ -121,7 +127,12 @@
             letter-spacing: 0.05em;
         }
 
+        /* CENTERED TAG MODEL */
         .tag-model {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             background-color: var(--bg-card);
             border: 1px solid var(--border-primary);
             padding: 6px 12px;
@@ -133,6 +144,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
+            z-index: 3;
         }
 
         .tag-model::before {
@@ -143,6 +156,34 @@
             border-radius: 50%;
         }
 
+        /* Navigation Header Style */
+        .glyph-nav {
+            z-index: 2;
+        }
+        
+        .glyph-nav .nav-btn {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            display: inline-block;
+        }
+        
+        .glyph-nav .nav-btn:hover {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* MAIN WYSIWYG LAYOUT */
         .main-layout {
             display: grid;
             grid-template-columns: 290px 1fr 390px;
@@ -167,8 +208,23 @@
             .left-column {
                 grid-column: span 1;
             }
+            .tag-model {
+                position: static;
+                transform: none;
+                margin-top: 8px;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .glyph-nav {
+                align-self: flex-end;
+                margin-top: -30px;
+            }
         }
 
+        /* CARD/WIDGET STYLING (NOTHING OS 3.0 INSPIRATION) */
         .widget {
             background: var(--bg-card);
             border: 1px solid var(--border-primary);
@@ -203,6 +259,7 @@
             display: inline-block;
         }
 
+        /* LEFT COLUMN: FILMS/FRAMES WIDGET */
         .left-column {
             display: flex;
             flex-direction: column;
@@ -218,6 +275,7 @@
             padding-right: 4px;
         }
 
+        /* Scrollbar styles to match Nothing OS dark theme */
         .frames-container::-webkit-scrollbar, .modal-content::-webkit-scrollbar {
             width: 4px;
         }
@@ -313,6 +371,7 @@
             border-bottom-color: #fff;
         }
 
+        /* Remove spinner from number input */
         .frame-card-duration-input::-webkit-outer-spin-button,
         .frame-card-duration-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -330,6 +389,7 @@
             margin-bottom: 12px;
         }
 
+        /* CENTER COLUMN: GLYPH EMULATOR */
         .emulator-container {
             display: flex;
             flex-direction: column;
@@ -349,6 +409,7 @@
             align-items: center;
         }
 
+        /* Transparent engineering lines underneath matrix */
         .phone-internal-circuits {
             position: absolute;
             top: 24px;
@@ -396,6 +457,7 @@
             box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
         }
 
+        /* Onion Skin Switch - Bottom Right of Phone Bezel */
         .onion-skin-switch {
             position: absolute;
             bottom: 24px;
@@ -461,11 +523,12 @@
             transform: translateX(16px);
         }
 
+        /* Main circular glyph cluster 25x25 */
         .matrix-grid {
             display: grid;
             grid-template-columns: repeat(25, 1fr);
             grid-template-rows: repeat(25, 1fr);
-            gap: 2px;
+            gap: 3px;
             width: 100%;
             height: 100%;
         }
@@ -473,26 +536,14 @@
         .led-node {
             aspect-ratio: 1;
             background: var(--glyph-off);
-            border-radius: 1.5px;
+            border-radius: 2px;
             cursor: pointer;
             transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
         }
 
-        .led-node::before {
-            content: '';
-            position: absolute;
-            top: 15%;
-            left: 15%;
-            width: 70%;
-            height: 70%;
-            border-radius: 1px;
-            background: rgba(255,255,255,0.02);
-            transition: all 0.12s ease;
-        }
-
         .led-node:hover:not(.null-zone) {
-            transform: scale(1.1);
+            transform: scale(1.15);
             background: #2c2c2e;
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
             z-index: 3;
@@ -503,15 +554,13 @@
             cursor: default!important;
         }
 
-        .led-node.null-zone::before {
-            display: none;
-        }
-
+        /* LED Brightness States scaling with color values */
         .led-node.lit {
             background-color: var(--glyph-active);
             box-shadow: 0 0 14px rgba(255,255,255,0.95);
         }
 
+        /* PLAYBACK AND UTILS BAR */
         .playback-widget {
             display: flex;
             align-items: center;
@@ -557,6 +606,7 @@
             font-size: 13px;
         }
 
+        /* FPS Control in Playback */
         .fps-control-inline {
             display: flex;
             align-items: center;
@@ -618,12 +668,14 @@
             transform: scale(1.25);
         }
 
+        /* RIGHT COLUMN: CONTROLS & IO */
         .right-column {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
+        /* SLIDER / ENCODER COMPONENT */
         .encoder-group {
             display: flex;
             align-items: center;
@@ -686,12 +738,14 @@
             border-bottom-color: #fff;
         }
 
+        /* GRID/TOOLS LAYOUT */
         .grid-tools {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
+        /* BUTTON DESIGN - PREMIUM RAW FLAT NOT-OS STYLING */
         .btn-raw {
             background-color: var(--bg-widget);
             border: 1px solid var(--border-primary);
@@ -750,6 +804,7 @@
             background-color: var(--bg-widget);
         }
 
+        /* KILL SWITCH - DO OVER BUTTON */
         .btn-kill-switch {
             background: linear-gradient(180deg, #8b0000 0%, #5c0000 100%);
             border: 3px solid #ff0000;
@@ -806,6 +861,7 @@
             filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
+        /* ✅ NEW: GREEN GLOW BUTTON (COMPILE & EXPORT) */
         .btn-compile-export {
             background: linear-gradient(180deg, #00d68f 0%, #008a5e 100%);
             border: 3px solid #00ff9d;
@@ -847,6 +903,7 @@
         }
         .btn-compile-export:active { transform: translateY(0); box-shadow: 0 0 15px rgba(0, 255, 157, 0.4); }
 
+        /* ✅ NEW: YELLOW GLOW BUTTON (IMPORT JSON) */
         .btn-import-json {
             background: linear-gradient(180deg, #f1c40f 0%, #b7950b 100%);
             border: 3px solid #ffd700;
@@ -888,6 +945,7 @@
         }
         .btn-import-json:active { transform: translateY(0); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
 
+        /* MODAL STYLING (NOT-OS FLOATING CARD) */
         .modal {
             position: fixed;
             top: 0;
@@ -984,6 +1042,7 @@
             border-color: #30d158;
         }
 
+        /* FILE DRAG ZONE */
         .dropbox-not {
             border: 1px dashed var(--border-primary);
             border-radius: 16px;
@@ -1014,6 +1073,7 @@
             margin-top: 20px;
         }
 
+        /* TOAST HUD (Minimal bottom notifier) */
         .toast-not {
             position: fixed;
             bottom: 30px;
@@ -1048,6 +1108,7 @@
             border-radius: 50%;
         }
 
+        /* EXTRA FOOTER DETAILS */
         footer {
             margin-top: auto;
             border-top: 1px solid var(--border-primary);
@@ -1060,6 +1121,7 @@
             color: var(--text-secondary);
         }
 
+        /* Responsive layout adaptation */
         @media (max-width: 768px) {
             .container {
                 padding: 16px;
@@ -1076,49 +1138,12 @@
                 font-size: 9px;
             }
         }
-            /* Navigation Header Style */
-    .glyph-nav {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        display: flex;
-        gap: 10px;
-        z-index: 1000;
-        font-family: 'Space Mono', monospace, sans-serif;
-    }
-    
-    .glyph-nav .nav-btn {
-        color: #ffffff;
-        text-decoration: none;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-        padding: 8px 12px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px);
-        transition: all 0.2s ease;
-        text-transform: uppercase;
-    }
-    
-    .glyph-nav .nav-btn:hover {
-        background: #d71921; /* สีแดงสไตล์ Nothing */
-        border-color: #d71921;
-        color: #fff;
-        cursor: pointer;
-    }
-    
-    /* คลาสสำหรับหน้าเว็บที่กำลังเปิดอยู่ (Active State) */
-    .glyph-nav .nav-btn.active {
-        background: #ffffff;
-        color: #000000;
-        border-color: #ffffff;
-        font-weight: bold;
-    }
     </style>
 </head>
 <body>
     <div class="container">
-            <header style="position: relative;">
+        <!-- GLOBAL APP HEADER -->
+        <header>
             <div class="brand-group">
                 <div class="brand-title">
                     <span class="brand-active-dot"></span>
@@ -1126,16 +1151,19 @@
                 </div>
                 <div class="brand-subtitle">Nothing OS // LED Dot Matrix Synthesizer</div>
             </div>
-            <div class="tag-model">
-                MATRIX 25×25 (V1 COMPLIANT)
-            </div>
-                    <nav class="glyph-nav">
-        <a href="index.html" class="nav-btn">Nothing 3 25x25 Dots</a>
-        <a href="25x25-json-reader.html" class="nav-btn active">Nothing 4a pro 13x13 Dots</a>
-    </nav>
+            
+            <!-- CENTERED TAG -->
+            <div class="tag-model">MATRIX 25×25 (V1 COMPLIANT)</div>
+            
+            <!-- Navigation - ปุ่มเดียวไปหน้าอื่น -->
+            <nav class="glyph-nav">
+                <a href="index.html" class="nav-btn">Switch to Nothing 4A Pro (13×13)</a>
+            </nav>
         </header>
 
+        <!-- APP INTERACTIVE LAYOUT -->
         <main class="main-layout">
+            <!-- LEFT COLUMN: FRAMES LIST & ENGINE CONTROL -->
             <section class="left-column">
                 <div class="widget">
                     <div class="widget-title">
@@ -1149,19 +1177,25 @@
                     <div style="margin-bottom: 12px;">
                         <button class="btn-raw accent" id="deleteFrameBtn" style="width: 100%;">DELETE CURRENT</button>
                     </div>
-                    <div class="frames-container" id="framesContainer"></div>
+                    <div class="frames-container" id="framesContainer">
+                        <!-- Frame cards will render dynamically here -->
+                    </div>
                 </div>
             </section>
 
+            <!-- CENTER COLUMN: MAIN HARDWARE EMULATOR -->
             <section class="emulator-container">
                 <div class="phone-bezel-emulator">
                     <div class="phone-internal-circuits"></div>
                     <div class="nothing-hardware-logo">NOTHING (R) CONCEPT DEV</div>
                     
                     <div class="grid-wrapper-circular">
-                        <div class="matrix-grid" id="matrixGrid"></div>
+                        <div class="matrix-grid" id="matrixGrid">
+                            <!-- Matrix cells initialized inside IIFE -->
+                        </div>
                     </div>
 
+                    <!-- Onion Skin Switch - Bottom Right -->
                     <div class="onion-skin-switch" id="onionToggle">
                         <span class="onion-skin-label">ONION</span>
                         <div class="onion-switch-track"></div>
@@ -1178,6 +1212,7 @@
                         </div>
                     </div>
 
+                    <!-- FPS Control moved here -->
                     <div class="fps-control-inline">
                         <span class="fps-label">FPS</span>
                         <input type="number" id="fpsInput" value="8" min="1" max="60" class="fps-input-inline">
@@ -1186,6 +1221,7 @@
                 </div>
             </section>
 
+            <!-- RIGHT COLUMN: MODIFIERS AND JSON UTILS -->
             <section class="right-column">
                 <div class="widget">
                     <div class="widget-title">
@@ -1220,6 +1256,7 @@
                     </div>
                 </div>
 
+                <!-- DO OVER KILL SWITCH WIDGET -->
                 <div class="widget">
                     <div class="widget-title">
                         SYSTEM RESET
@@ -1247,12 +1284,14 @@
             </section>
         </main>
 
+        <!-- FOOTER BRANDING -->
         <footer>
             <div>DESIGNED IN LONDON // RECONSTRUCTED FOR NOTHING 3</div>
             <div>[VER 3.1.0-STABLE]</div>
         </footer>
     </div>
 
+    <!-- MODAL: IMPORT -->
     <div class="modal" id="importModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1275,6 +1314,7 @@
         </div>
     </div>
 
+    <!-- MODAL: EXPORT -->
     <div class="modal" id="exportModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1294,11 +1334,13 @@
         </div>
     </div>
 
+    <!-- GLOBAL HUD TOAST -->
     <div class="toast-not" id="toast">
         <div class="toast-dot"></div>
         <span id="toastMsg" style="font-family: var(--font-mono);">SYSTEM STANDBY</span>
     </div>
 
+    <!-- IIFE IMPLEMENTATION FOR SANDBOX ISOLATION -->
     <script>
         (function() {
             document.addEventListener('DOMContentLoaded', () => {
@@ -1306,31 +1348,19 @@
                 const DEFAULT_FPS = 8;
                 const DEFAULT_DURATION = Math.round(1000 / DEFAULT_FPS);
 
-                const ROW_ACTIVE_COUNT = {
-                    0: 7, 24: 7,
-                    1: 11, 23: 11,
-                    2: 15, 22: 15,
-                    3: 17, 21: 17,
-                    4: 19, 20: 19,
-                    5: 21, 19: 21,
-                    6: 21, 18: 21,
-                    7: 23, 17: 23,
-                    8: 23, 16: 23,
-                    9: 25, 10: 25, 11: 25, 12: 25, 13: 25, 14: 25, 15: 25
-                };
+                // Full 25x25 grid mapping (V1 Format)
+                // Adjust ROW_ACTIVE_COUNT if hardware has specific cutouts, otherwise full matrix
+                const ROW_ACTIVE_COUNT = {};
+                for(let i=0; i<GRID_SIZE; i++) ROW_ACTIVE_COUNT[i] = GRID_SIZE;
 
                 function createPixelMapping() {
                     const mappings = [];
                     let mappingIndex = 0;
                     for (let row = 0; row < GRID_SIZE; row++) {
-                        const count = ROW_ACTIVE_COUNT[row];
+                        const count = ROW_ACTIVE_COUNT[row] || GRID_SIZE;
                         const offset = Math.floor((GRID_SIZE - count) / 2);
                         for (let col = offset; col < offset + count; col++) {
-                            mappings.push({
-                                linearIndex: mappingIndex,
-                                row: row,
-                                col: col
-                            });
+                            mappings.push({ linearIndex: mappingIndex, row, col });
                             mappingIndex++;
                         }
                     }
@@ -1339,6 +1369,7 @@
 
                 const PIXEL_MAPPING = createPixelMapping();
 
+                // State Machine
                 let frames = [];
                 let currentFrameIndex = 0;
                 let currentColor = 255;
@@ -1346,7 +1377,6 @@
                 let onionSkinEnabled = false;
                 let isPlaying = false;
                 let playTimer = null;
-                
                 let historyRegistry = [];
                 let historyPointer = -1;
 
@@ -1367,14 +1397,12 @@
                 function buildHardwareGrid() {
                     const matrixGrid = document.getElementById('matrixGrid');
                     matrixGrid.innerHTML = '';
-
                     for (let row = 0; row < GRID_SIZE; row++) {
                         for (let col = 0; col < GRID_SIZE; col++) {
                             const node = document.createElement('div');
                             node.className = 'led-node';
                             node.dataset.row = row;
                             node.dataset.col = col;
-
                             if (!computeValidLEDState(row, col)) {
                                 node.classList.add('null-zone');
                             } else {
@@ -1451,10 +1479,7 @@
                 }
 
                 function createNewFrame() {
-                    const emptyFrame = {
-                        duration: DEFAULT_DURATION,
-                        pixels: new Array(GRID_SIZE * GRID_SIZE).fill(0)
-                    };
+                    const emptyFrame = { duration: DEFAULT_DURATION, pixels: new Array(GRID_SIZE * GRID_SIZE).fill(0) };
                     frames.push(emptyFrame);
                     currentFrameIndex = frames.length - 1;
                     displayFrameCanvas();
@@ -1464,10 +1489,7 @@
                 function cloneActiveFrame() {
                     if (frames.length === 0) return;
                     const parentFrame = frames[currentFrameIndex];
-                    const clonedDetails = {
-                        duration: parentFrame.duration,
-                        pixels: [...parentFrame.pixels]
-                    };
+                    const clonedDetails = { duration: parentFrame.duration, pixels: [...parentFrame.pixels] };
                     frames.splice(currentFrameIndex + 1, 0, clonedDetails);
                     currentFrameIndex++;
                     displayFrameCanvas();
@@ -1476,14 +1498,9 @@
                 }
 
                 function deleteActiveFrame() {
-                    if (frames.length <= 1) {
-                        renderOSNotification("CANNOT PURGE LAST FRAME");
-                        return;
-                    }
+                    if (frames.length <= 1) { renderOSNotification("CANNOT PURGE LAST FRAME"); return; }
                     frames.splice(currentFrameIndex, 1);
-                    if (currentFrameIndex >= frames.length) {
-                        currentFrameIndex = frames.length - 1;
-                    }
+                    if (currentFrameIndex >= frames.length) currentFrameIndex = frames.length - 1;
                     displayFrameCanvas();
                     updateUIState();
                     renderOSNotification("FRAME DELETED");
@@ -1492,77 +1509,41 @@
                 function rebuildMiniThumbnails() {
                     const wrapper = document.getElementById('framesContainer');
                     wrapper.innerHTML = '';
-
                     frames.forEach((frame, idx) => {
                         const cell = document.createElement('div');
                         cell.className = `frame-card ${idx === currentFrameIndex ? 'active' : ''}`;
-
-                        const drawWrap = document.createElement('div');
-                        drawWrap.className = 'thumbnail-wrapper';
-
+                        const drawWrap = document.createElement('div'); drawWrap.className = 'thumbnail-wrapper';
                         const miniCanvas = document.createElement('canvas');
-                        miniCanvas.width = GRID_SIZE;
-                        miniCanvas.height = GRID_SIZE;
+                        miniCanvas.width = GRID_SIZE; miniCanvas.height = GRID_SIZE;
                         const renderer = miniCanvas.getContext('2d');
-                        renderer.fillStyle = '#0a0a0a';
-                        renderer.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
-
+                        renderer.fillStyle = '#0a0a0a'; renderer.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
                         for (let r = 0; r < GRID_SIZE; r++) {
                             for (let c = 0; c < GRID_SIZE; c++) {
                                 if (computeValidLEDState(r, c)) {
                                     const lum = frame.pixels[r * GRID_SIZE + c];
-                                    if (lum > 0) {
-                                        renderer.fillStyle = `rgb(${lum}, ${lum}, ${lum})`;
-                                        renderer.fillRect(c, r, 1, 1);
-                                    }
+                                    if (lum > 0) { renderer.fillStyle = `rgb(${lum},${lum},${lum})`; renderer.fillRect(c, r, 1, 1); }
                                 }
                             }
                         }
                         drawWrap.appendChild(miniCanvas);
-
-                        const labels = document.createElement('div');
-                        labels.className = 'frame-card-details';
-
-                        const orderNo = document.createElement('div');
-                        orderNo.className = 'frame-card-name';
+                        const labels = document.createElement('div'); labels.className = 'frame-card-details';
+                        const orderNo = document.createElement('div'); orderNo.className = 'frame-card-name';
                         orderNo.textContent = `F${(idx+1).toString().padStart(2, '0')}`;
-
-                        const metas = document.createElement('div');
-                        metas.className = 'frame-card-meta';
-
-                        const durLabel = document.createElement('span');
-                        durLabel.className = 'ms-badge';
-                        const fpsValue = Math.round(1000 / frame.duration);
-                        durLabel.textContent = `${fpsValue}fps`;
-
-                        metas.appendChild(durLabel);
-                        labels.appendChild(orderNo);
-                        labels.appendChild(metas);
-
+                        const metas = document.createElement('div'); metas.className = 'frame-card-meta';
+                        const durLabel = document.createElement('span'); durLabel.className = 'ms-badge';
+                        durLabel.textContent = `${Math.round(1000 / frame.duration)}fps`;
+                        metas.appendChild(durLabel); labels.appendChild(orderNo); labels.appendChild(metas);
                         const frameDelayField = document.createElement('input');
-                        frameDelayField.type = 'number';
-                        frameDelayField.className = 'frame-card-duration-input';
-                        frameDelayField.value = Math.round(1000 / frame.duration);
-                        frameDelayField.min = 1;
-                        frameDelayField.max = 60;
+                        frameDelayField.type = 'number'; frameDelayField.className = 'frame-card-duration-input';
+                        frameDelayField.value = Math.round(1000 / frame.duration); frameDelayField.min = 1; frameDelayField.max = 60;
                         frameDelayField.addEventListener('change', (e) => {
-                            let fpsVal = parseInt(e.target.value) || DEFAULT_FPS;
-                            fpsVal = Math.max(1, Math.min(60, fpsVal));
+                            let fpsVal = Math.max(1, Math.min(60, parseInt(e.target.value) || DEFAULT_FPS));
                             frame.duration = Math.round(1000 / fpsVal);
                             durLabel.textContent = `${fpsVal}fps`;
                         });
                         frameDelayField.addEventListener('click', (e) => e.stopPropagation());
-
-                        cell.appendChild(drawWrap);
-                        cell.appendChild(labels);
-                        cell.appendChild(frameDelayField);
-
-                        cell.addEventListener('click', () => {
-                            currentFrameIndex = idx;
-                            displayFrameCanvas();
-                            updateUIState();
-                        });
-
+                        cell.appendChild(drawWrap); cell.appendChild(labels); cell.appendChild(frameDelayField);
+                        cell.addEventListener('click', () => { currentFrameIndex = idx; displayFrameCanvas(); updateUIState(); });
                         wrapper.appendChild(cell);
                     });
                 }
@@ -1573,321 +1554,123 @@
                 }
 
                 function preserveCompositionHistory() {
-                    const snap = {
-                        duration: frames[currentFrameIndex].duration,
-                        pixels: [...frames[currentFrameIndex].pixels]
-                    };
+                    const snap = { duration: frames[currentFrameIndex].duration, pixels: [...frames[currentFrameIndex].pixels] };
                     historyRegistry = historyRegistry.slice(0, historyPointer + 1);
                     historyRegistry.push({ idx: currentFrameIndex, instance: snap });
                     historyPointer++;
-                    if (historyRegistry.length > 30) {
-                        historyRegistry.shift();
-                        historyPointer--;
-                    }
+                    if (historyRegistry.length > 30) { historyRegistry.shift(); historyPointer--; }
                 }
 
                 function fillWiredHardware() {
-                    const activeFrame = frames[currentFrameIndex];
-                    for (let r = 0; r < GRID_SIZE; r++) {
-                        for (let c = 0; c < GRID_SIZE; c++) {
-                            if (computeValidLEDState(r, c)) {
-                                activeFrame.pixels[r * GRID_SIZE + c] = currentColor;
-                            }
-                        }
-                    }
-                    displayFrameCanvas();
-                    preserveCompositionHistory();
-                    renderOSNotification("MATRIX INTENSITY MAXIMIZED");
+                    const f = frames[currentFrameIndex];
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) f.pixels[r * GRID_SIZE + c] = currentColor;
+                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("MATRIX INTENSITY MAXIMIZED");
                 }
-
                 function invertActiveWired() {
-                    const activeFrame = frames[currentFrameIndex];
-                    for (let r = 0; r < GRID_SIZE; r++) {
-                        for (let c = 0; c < GRID_SIZE; c++) {
-                            if (computeValidLEDState(r, c)) {
-                                const idx = r * GRID_SIZE + c;
-                                activeFrame.pixels[idx] = 255 - activeFrame.pixels[idx];
-                            }
-                        }
-                    }
-                    displayFrameCanvas();
-                    preserveCompositionHistory();
-                    renderOSNotification("MATRIX INVERTED");
+                    const f = frames[currentFrameIndex];
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) f.pixels[r * GRID_SIZE + c] = 255 - f.pixels[r * GRID_SIZE + c];
+                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("MATRIX INVERTED");
                 }
-
                 function mirrorActiveHardware() {
-                    const activeFrame = frames[currentFrameIndex];
-                    const temp = [...activeFrame.pixels];
-                    for (let r = 0; r < GRID_SIZE; r++) {
-                        for (let c = 0; c < GRID_SIZE; c++) {
-                            if (computeValidLEDState(r, c)) {
-                                const mirroredCol = GRID_SIZE - 1 - c;
-                                if (computeValidLEDState(r, mirroredCol)) {
-                                    activeFrame.pixels[r * GRID_SIZE + mirroredCol] = temp[r * GRID_SIZE + c];
-                                }
-                            }
-                        }
+                    const f = frames[currentFrameIndex]; const temp = [...f.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) {
+                        const mc = GRID_SIZE - 1 - c; if (computeValidLEDState(r, mc)) f.pixels[r * GRID_SIZE + mc] = temp[r * GRID_SIZE + c];
                     }
-                    displayFrameCanvas();
-                    preserveCompositionHistory();
-                    renderOSNotification("MIRRORED SYMMETRY ENFORCED");
+                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("MIRRORED SYMMETRY ENFORCED");
                 }
-
                 function flipActiveHardware() {
-                    const activeFrame = frames[currentFrameIndex];
-                    const temp = [...activeFrame.pixels];
-                    for (let r = 0; r < GRID_SIZE; r++) {
-                        for (let c = 0; c < GRID_SIZE; c++) {
-                            if (computeValidLEDState(r, c)) {
-                                const flippedRow = GRID_SIZE - 1 - r;
-                                if (computeValidLEDState(flippedRow, c)) {
-                                    activeFrame.pixels[flippedRow * GRID_SIZE + c] = temp[r * GRID_SIZE + c];
-                                }
-                            }
-                        }
+                    const f = frames[currentFrameIndex]; const temp = [...f.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) {
+                        const fr = GRID_SIZE - 1 - r; if (computeValidLEDState(fr, c)) f.pixels[fr * GRID_SIZE + c] = temp[r * GRID_SIZE + c];
                     }
-                    displayFrameCanvas();
-                    preserveCompositionHistory();
-                    renderOSNotification("VERTICAL FLIP");
+                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("VERTICAL FLIP");
                 }
-
                 function rotateActiveHardware() {
-                    const activeFrame = frames[currentFrameIndex];
-                    const temp = [...activeFrame.pixels];
-                    const rotated = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-                    
-                    for (let r = 0; r < GRID_SIZE; r++) {
-                        for (let c = 0; c < GRID_SIZE; c++) {
-                            if (computeValidLEDState(r, c)) {
-                                const newRow = c;
-                                const newCol = GRID_SIZE - 1 - r;
-                                if (computeValidLEDState(newRow, newCol)) {
-                                    rotated[newRow * GRID_SIZE + newCol] = temp[r * GRID_SIZE + c];
-                                }
-                            }
-                        }
+                    const f = frames[currentFrameIndex]; const temp = [...f.pixels]; const rotated = new Array(GRID_SIZE * GRID_SIZE).fill(0);
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) {
+                        const nr = c, nc = GRID_SIZE - 1 - r; if (computeValidLEDState(nr, nc)) rotated[nr * GRID_SIZE + nc] = temp[r * GRID_SIZE + c];
                     }
-                    activeFrame.pixels = rotated;
-                    displayFrameCanvas();
-                    preserveCompositionHistory();
-                    renderOSNotification("ROTATE 90° CW");
+                    f.pixels = rotated; displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("ROTATE 90° CW");
                 }
-
                 function clearActiveFrame() {
-                    const activeFrame = frames[currentFrameIndex];
-                    activeFrame.pixels.fill(0);
-                    displayFrameCanvas();
-                    preserveCompositionHistory();
+                    frames[currentFrameIndex].pixels.fill(0); displayFrameCanvas(); preserveCompositionHistory();
                 }
-
                 function triggerLEDTestPulse() {
-                    const frame = frames[currentFrameIndex];
-                    const tempRecord = [...frame.pixels];
-                    
-                    for (let row = 0; row < GRID_SIZE; row++) {
-                        for (let col = 0; col < GRID_SIZE; col++) {
-                            if (computeValidLEDState(row, col)) {
-                                frame.pixels[row * GRID_SIZE + col] = 255;
-                            }
-                        }
-                    }
-                    displayFrameCanvas();
-                    renderOSNotification("PULSATOR CALIBRATING...");
-                    
-                    setTimeout(() => {
-                        frame.pixels = tempRecord;
-                        displayFrameCanvas();
-                    }, 500);
+                    const frame = frames[currentFrameIndex]; const temp = [...frame.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) frame.pixels[r * GRID_SIZE + c] = 255;
+                    displayFrameCanvas(); renderOSNotification("PULSATOR CALIBRATING...");
+                    setTimeout(() => { frame.pixels = temp; displayFrameCanvas(); }, 500);
                 }
 
                 function doOverReset() {
-                    if (!confirm('⚠️ WARNING: This will erase ALL frames and data.\n\nAre you sure you want to start over?')) {
-                        return;
-                    }
-
-                    if (isPlaying) {
-                        ceaseSequencer();
-                    }
-
-                    frames = [];
-                    currentFrameIndex = 0;
-                    historyRegistry = [];
-                    historyPointer = -1;
-                    onionSkinEnabled = false;
-                    
-                    const onionToggle = document.getElementById('onionToggle');
-                    if (onionToggle) {
-                        onionToggle.classList.remove('active');
-                    }
-
+                    if (!confirm('⚠️ WARNING: This will erase ALL frames and data.\n\nAre you sure you want to start over?')) return;
+                    if (isPlaying) ceaseSequencer();
+                    frames = []; currentFrameIndex = 0; historyRegistry = []; historyPointer = -1; onionSkinEnabled = false;
+                    document.getElementById('onionToggle').classList.remove('active');
                     currentColor = 255;
-                    const colSlider = document.getElementById('colorSlider');
-                    const colInput = document.getElementById('colorInput');
-                    const previewNode = document.getElementById('colorPreview');
-                    
-                    if (colSlider) colSlider.value = 255;
-                    if (colInput) colInput.value = 255;
-                    if (previewNode) {
-                        previewNode.style.backgroundColor = 'rgb(255, 255, 255)';
-                        previewNode.style.boxShadow = '0 0 14px rgba(255, 255, 255, 0.8)';
-                    }
-
-                    const fpsSlider = document.getElementById('fpsSlider');
-                    const fpsInput = document.getElementById('fpsInput');
-                    
-                    if (fpsSlider) fpsSlider.value = DEFAULT_FPS;
-                    if (fpsInput) fpsInput.value = DEFAULT_FPS;
-
-                    createNewFrame();
-                    
-                    renderOSNotification("SYSTEM RESET COMPLETE - FRESH SESSION");
+                    document.getElementById('colorSlider').value = 255;
+                    document.getElementById('colorInput').value = 255;
+                    const p = document.getElementById('colorPreview');
+                    p.style.backgroundColor = '#fff'; p.style.boxShadow = '0 0 14px rgba(255,255,255,0.8)';
+                    document.getElementById('fpsSlider').value = DEFAULT_FPS;
+                    document.getElementById('fpsInput').value = DEFAULT_FPS;
+                    createNewFrame(); renderOSNotification("SYSTEM RESET COMPLETE - FRESH SESSION");
                 }
 
                 function toggleSequencerState() {
-                    if (isPlaying) {
-                        ceaseSequencer();
-                        return;
-                    }
-
+                    if (isPlaying) { ceaseSequencer(); return; }
                     if (frames.length === 0) return;
-
                     isPlaying = true;
                     document.getElementById('playBtn').textContent = '⏸';
                     document.getElementById('playBtn').style.backgroundColor = 'var(--accent-red)';
                     document.getElementById('playBtn').style.color = '#fff';
                     renderOSNotification("SEQUENCER TRANSMITTING");
-
-                    let frameTimerSequence = 0;
+                    let seq = 0;
                     function engineTick() {
                         if (!isPlaying) return;
-                        currentFrameIndex = frameTimerSequence;
-                        displayFrameCanvas();
-                        updateUIState();
-                        
-                        const currentFrameDuration = frames[frameTimerSequence].duration || DEFAULT_DURATION;
-                        playTimer = setTimeout(() => {
-                            frameTimerSequence = (frameTimerSequence + 1) % frames.length;
-                            engineTick();
-                        }, currentFrameDuration);
+                        currentFrameIndex = seq; displayFrameCanvas(); updateUIState();
+                        const dur = frames[seq].duration || DEFAULT_DURATION;
+                        playTimer = setTimeout(() => { seq = (seq + 1) % frames.length; engineTick(); }, dur);
                     }
                     engineTick();
                 }
-
                 function ceaseSequencer() {
                     isPlaying = false;
                     document.getElementById('playBtn').textContent = '▶';
                     document.getElementById('playBtn').style.backgroundColor = 'var(--text-primary)';
                     document.getElementById('playBtn').style.color = 'var(--bg-pure)';
                     renderOSNotification("SEQUENCER IDLE");
-                    if (playTimer) {
-                        clearTimeout(playTimer);
-                        playTimer = null;
-                    }
+                    if (playTimer) { clearTimeout(playTimer); playTimer = null; }
                 }
 
                 function renderOnionGhost() {
                     if (!onionSkinEnabled || currentFrameIndex === 0) return;
-
-                    const precedingNodeFrame = frames[currentFrameIndex - 1];
-                    for (let row = 0; row < GRID_SIZE; row++) {
-                        for (let col = 0; col < GRID_SIZE; col++) {
-                            if (computeValidLEDState(row, col)) {
-                                const matrixIndex = row * GRID_SIZE + col;
-                                const activeValue = frames[currentFrameIndex].pixels[matrixIndex];
-                                const traceValue = precedingNodeFrame.pixels[matrixIndex];
-
-                                if (activeValue === 0 && traceValue > 0) {
-                                    const node = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                                    if (node) {
-                                        node.style.backgroundColor = `rgba(255, 59, 48, 0.25)`;
-                                        node.style.boxShadow = `inset 0 0 4px rgba(255, 59, 48, 0.4)`;
-                                    }
-                                }
+                    const prev = frames[currentFrameIndex - 1];
+                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) {
+                        if (computeValidLEDState(r, c)) {
+                            const idx = r * GRID_SIZE + c;
+                            if (frames[currentFrameIndex].pixels[idx] === 0 && prev.pixels[idx] > 0) {
+                                const node = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                                if (node) { node.style.backgroundColor = `rgba(255, 59, 48, 0.25)`; node.style.boxShadow = `inset 0 0 4px rgba(255, 59, 48, 0.4)`; }
                             }
                         }
                     }
                 }
 
                 function parseCompositionToV1() {
-                    const output = {
-                        v: 1,
-                        frames: frames.map(f => {
-                            const serializedData = [];
-                            PIXEL_MAPPING.forEach(({ row, col }) => {
-                                serializedData.push(f.pixels[row * GRID_SIZE + col]);
-                            });
-                            return {
-                                d: f.duration,
-                                p: serializedData
-                            };
-                        })
-                    };
+                    const output = { v: 1, frames: frames.map(f => ({ d: f.duration, p: f.pixels })) };
                     return JSON.stringify(output);
                 }
 
                 function loadV1Composition(jsonCode) {
                     try {
                         const parsed = JSON.parse(jsonCode);
-                        let verifiedVer = parsed.v;
-                        if (verifiedVer === undefined) {
-                            const findAlternativeKeys = Object.keys(parsed);
-                            const keyMatch = findAlternativeKeys.find(k => k.trim() === 'v');
-                            if (keyMatch) verifiedVer = parsed[keyMatch];
-                        }
-
-                        if (Number(verifiedVer) !== 1) {
-                            renderOSNotification("LOAD REJECTED: REQUIRES V1 SOURCE");
-                            return false;
-                        }
-
-                        let targetFrames = parsed.frames;
-                        if (!targetFrames) {
-                            const keys = Object.keys(parsed);
-                            const foundKey = keys.find(k => k.trim() === 'frames');
-                            if (foundKey) targetFrames = parsed[foundKey];
-                        }
-
-                        if (!targetFrames || !Array.isArray(targetFrames)) {
-                            renderOSNotification("LOAD ERROR: STRUCT DISCREPANCY");
-                            return false;
-                        }
-
-                        frames = targetFrames.map(nodeRawFrame => {
-                            const reconstructedMap = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-                            let durRaw = nodeRawFrame.d;
-                            let pMapArray = nodeRawFrame.p;
-
-                            if (durRaw === undefined || pMapArray === undefined) {
-                                const keys = Object.keys(nodeRawFrame);
-                                const dKey = keys.find(k => k.trim() === 'd');
-                                const pKey = keys.find(k => k.trim() === 'p');
-                                if (dKey) durRaw = nodeRawFrame[dKey];
-                                if (pKey) pMapArray = nodeRawFrame[pKey];
-                            }
-
-                            PIXEL_MAPPING.forEach(({ linearIndex, row, col }) => {
-                                if (pMapArray && linearIndex < pMapArray.length) {
-                                    reconstructedMap[row * GRID_SIZE + col] = pMapArray[linearIndex];
-                                }
-                            });
-
-                            return {
-                                duration: durRaw || DEFAULT_DURATION,
-                                pixels: reconstructedMap
-                            };
-                        });
-
-                        currentFrameIndex = 0;
-                        historyRegistry = [];
-                        historyPointer = -1;
-                        displayFrameCanvas();
-                        updateUIState();
-                        renderOSNotification("SOURCE RECONSTRUCTION STABLE");
-                        return true;
-                    } catch (err) {
-                        renderOSNotification("PARSING ERROR: INVALID JSON");
-                        return false;
-                    }
+                        if (Number(parsed.v) !== 1) { renderOSNotification("LOAD REJECTED: REQUIRES V1 SOURCE"); return false; }
+                        if (!parsed.frames || !Array.isArray(parsed.frames)) { renderOSNotification("LOAD ERROR: STRUCT DISCREPANCY"); return false; }
+                        frames = parsed.frames.map(fr => ({ duration: fr.d || DEFAULT_DURATION, pixels: [...fr.p] }));
+                        currentFrameIndex = 0; historyRegistry = []; historyPointer = -1;
+                        displayFrameCanvas(); updateUIState(); renderOSNotification("SOURCE RECONSTRUCTION STABLE"); return true;
+                    } catch (err) { renderOSNotification("PARSING ERROR: INVALID JSON"); return false; }
                 }
 
                 function renderOSNotification(status) {
@@ -1902,54 +1685,33 @@
                     document.getElementById('addFrameBtn').addEventListener('click', createNewFrame);
                     document.getElementById('cloneFrameBtn').addEventListener('click', cloneActiveFrame);
                     document.getElementById('deleteFrameBtn').addEventListener('click', deleteActiveFrame);
-                    
                     document.getElementById('playBtn').addEventListener('click', toggleSequencerState);
-                    
                     document.getElementById('onionToggle').addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        onionSkinEnabled = this.classList.contains('active');
-                        displayFrameCanvas();
+                        this.classList.toggle('active'); onionSkinEnabled = this.classList.contains('active'); displayFrameCanvas();
                     });
 
                     const colSlider = document.getElementById('colorSlider');
                     const colInput = document.getElementById('colorInput');
                     const previewNode = document.getElementById('colorPreview');
-
-                    function changeLocalActiveColor(intensity) {
-                        currentColor = Math.max(0, Math.min(255, intensity));
-                        colSlider.value = currentColor;
-                        colInput.value = currentColor;
-                        previewNode.style.backgroundColor = `rgb(${currentColor}, ${currentColor}, ${currentColor})`;
-                        previewNode.style.boxShadow = `0 0 14px rgba(${currentColor}, ${currentColor}, ${currentColor}, 0.8)`;
+                    function changeColor(val) {
+                        currentColor = Math.max(0, Math.min(255, val));
+                        colSlider.value = currentColor; colInput.value = currentColor;
+                        previewNode.style.backgroundColor = `rgb(${currentColor},${currentColor},${currentColor})`;
+                        previewNode.style.boxShadow = `0 0 14px rgba(${currentColor},${currentColor},${currentColor},0.8)`;
                     }
-
-                    colSlider.addEventListener('input', (e) => {
-                        let stepVal = parseInt(e.target.value);
-                        if (stepVal >= 250) stepVal = 255;
-                        changeLocalActiveColor(stepVal);
-                    });
-
-                    colInput.addEventListener('change', (e) => {
-                        let fieldVal = parseInt(e.target.value) || 0;
-                        changeLocalActiveColor(fieldVal);
-                    });
+                    colSlider.addEventListener('input', (e) => changeColor(parseInt(e.target.value) >= 250 ? 255 : parseInt(e.target.value)));
+                    colInput.addEventListener('change', (e) => changeColor(parseInt(e.target.value) || 0));
 
                     const fpsSlider = document.getElementById('fpsSlider');
                     const fpsInput = document.getElementById('fpsInput');
-
                     fpsSlider.addEventListener('input', (e) => {
-                        const targetFPS = parseInt(e.target.value);
-                        fpsInput.value = targetFPS;
-                        frames.forEach(f => f.duration = Math.round(1000 / targetFPS));
-                        rebuildMiniThumbnails();
+                        const fps = parseInt(e.target.value); fpsInput.value = fps;
+                        frames.forEach(f => f.duration = Math.round(1000 / fps)); rebuildMiniThumbnails();
                     });
-
                     fpsInput.addEventListener('change', (e) => {
-                        const targetFPS = Math.max(1, Math.min(60, parseInt(e.target.value) || DEFAULT_FPS));
-                        fpsInput.value = targetFPS;
-                        fpsSlider.value = targetFPS;
-                        frames.forEach(f => f.duration = Math.round(1000 / targetFPS));
-                        rebuildMiniThumbnails();
+                        const fps = Math.max(1, Math.min(60, parseInt(e.target.value) || DEFAULT_FPS));
+                        fpsInput.value = fps; fpsSlider.value = fps;
+                        frames.forEach(f => f.duration = Math.round(1000 / fps)); rebuildMiniThumbnails();
                     });
 
                     document.getElementById('fillBtn').addEventListener('click', fillWiredHardware);
@@ -1959,109 +1721,47 @@
                     document.getElementById('rotateBtn').addEventListener('click', rotateActiveHardware);
                     document.getElementById('clearBtn').addEventListener('click', clearActiveFrame);
                     document.getElementById('flashTemplateBtn').addEventListener('click', triggerLEDTestPulse);
-
                     document.getElementById('doOverBtn').addEventListener('click', doOverReset);
 
                     const importModal = document.getElementById('importModal');
                     const exportModal = document.getElementById('exportModal');
-
-                    document.getElementById('importModalTrigger').addEventListener('click', () => {
-                        document.getElementById('importRawTextarea').value = '';
-                        importModal.classList.add('active');
-                    });
-
-                    document.getElementById('exportModalTrigger').addEventListener('click', () => {
-                        const payload = parseCompositionToV1();
-                        document.getElementById('exportRawTextarea').value = payload;
-                        exportModal.classList.add('active');
-                    });
-
-                    document.getElementById('closeImportBtn').addEventListener('click', () => {
-                        importModal.classList.remove('active');
-                    });
-                    document.getElementById('cancelImportBtn').addEventListener('click', () => {
-                        importModal.classList.remove('active');
-                    });
-
-                    document.getElementById('closeExportBtn').addEventListener('click', () => {
-                        exportModal.classList.remove('active');
-                    });
-
-                    document.getElementById('executeImportBtn').addEventListener('click', () => {
-                        const strInput = document.getElementById('importRawTextarea').value;
-                        if (loadV1Composition(strInput)) {
-                            importModal.classList.remove('active');
-                        }
-                    });
+                    document.getElementById('importModalTrigger').addEventListener('click', () => { document.getElementById('importRawTextarea').value = ''; importModal.classList.add('active'); });
+                    document.getElementById('exportModalTrigger').addEventListener('click', () => { document.getElementById('exportRawTextarea').value = parseCompositionToV1(); exportModal.classList.add('active'); });
+                    document.getElementById('closeImportBtn').addEventListener('click', () => importModal.classList.remove('active'));
+                    document.getElementById('cancelImportBtn').addEventListener('click', () => importModal.classList.remove('active'));
+                    document.getElementById('closeExportBtn').addEventListener('click', () => exportModal.classList.remove('active'));
+                    document.getElementById('executeImportBtn').addEventListener('click', () => { if (loadV1Composition(document.getElementById('importRawTextarea').value)) importModal.classList.remove('active'); });
 
                     const dropRegion = document.getElementById('dropzone');
                     const fileLoader = document.getElementById('fileLoader');
-
                     dropRegion.addEventListener('click', () => fileLoader.click());
-                    fileLoader.addEventListener('change', (e) => {
-                        const f = e.target.files[0];
-                        if (f) performLocalFileExtraction(f);
-                    });
-
-                    dropRegion.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        dropRegion.style.borderColor = '#ffffff';
-                        dropRegion.style.background = '#121212';
-                    });
-
-                    dropRegion.addEventListener('dragleave', () => {
-                        dropRegion.style.borderColor = 'var(--border-primary)';
-                        dropRegion.style.background = 'var(--bg-widget)';
-                    });
-
+                    fileLoader.addEventListener('change', (e) => { if (e.target.files[0]) performLocalFileExtraction(e.target.files[0]); });
+                    dropRegion.addEventListener('dragover', (e) => { e.preventDefault(); dropRegion.style.borderColor = '#fff'; dropRegion.style.background = '#121212'; });
+                    dropRegion.addEventListener('dragleave', () => { dropRegion.style.borderColor = 'var(--border-primary)'; dropRegion.style.background = 'var(--bg-widget)'; });
                     dropRegion.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        dropRegion.style.borderColor = 'var(--border-primary)';
-                        dropRegion.style.background = 'var(--bg-widget)';
+                        e.preventDefault(); dropRegion.style.borderColor = 'var(--border-primary)'; dropRegion.style.background = 'var(--bg-widget)';
                         const f = e.dataTransfer.files[0];
-                        if (f && f.name.endsWith('.json')) {
-                            performLocalFileExtraction(f);
-                        } else {
-                            renderOSNotification("ONLY .JSON STRUCTURES ACCEPTED");
-                        }
+                        if (f && f.name.endsWith('.json')) performLocalFileExtraction(f); else renderOSNotification("ONLY .JSON STRUCTURES ACCEPTED");
                     });
-
                     function performLocalFileExtraction(file) {
                         const reader = new FileReader();
-                        reader.onload = (event) => {
-                            if (loadV1Composition(event.target.result)) {
-                                importModal.classList.remove('active');
-                            }
-                        };
+                        reader.onload = (event) => { if (loadV1Composition(event.target.result)) importModal.classList.remove('active'); };
                         reader.readAsText(file);
                     }
 
                     document.getElementById('copyCompositionBtn').addEventListener('click', () => {
-                        const rawComponent = document.getElementById('exportRawTextarea');
-                        rawComponent.select();
-                        document.execCommand('copy');
+                        document.getElementById('exportRawTextarea').select(); document.execCommand('copy');
                         renderOSNotification("COMPOSITION COPIED TO SYSTEM CLIPBOARD");
                     });
-
                     document.getElementById('downloadCompositionBtn').addEventListener('click', () => {
-                        const stream = parseCompositionToV1();
-                        const blobStream = new Blob([stream], { type: 'application/json' });
-                        const systemURL = URL.createObjectURL(blobStream);
-                        const anchor = document.createElement('a');
-                        anchor.href = systemURL;
-                        anchor.download = 'nothing_matrix_pulse.json';
-                        anchor.click();
-                        URL.revokeObjectURL(systemURL);
+                        const blob = new Blob([parseCompositionToV1()], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob); const a = document.createElement('a');
+                        a.href = url; a.download = 'nothing_matrix_pulse.json'; a.click(); URL.revokeObjectURL(url);
                         renderOSNotification("JSON PAYLOAD EXPORTED");
                     });
 
-                    document.addEventListener('mouseup', () => {
-                        isDrawing = false;
-                    });
-
-                    document.addEventListener('dragstart', (e) => {
-                        e.preventDefault();
-                    });
+                    document.addEventListener('mouseup', () => isDrawing = false);
+                    document.addEventListener('dragstart', (e) => e.preventDefault());
                 }
 
                 applicationStart();
