@@ -79,12 +79,14 @@
             border-bottom: 1px dashed var(--border-primary);
             padding-bottom: 16px;
             position: relative;
+            min-height: 48px;
         }
 
         .brand-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
+            z-index: 2;
         }
 
         .brand-title {
@@ -125,7 +127,12 @@
             letter-spacing: 0.05em;
         }
 
+        /* CENTERED TAG MODEL - Absolute Center */
         .tag-model {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             background-color: var(--bg-card);
             border: 1px solid var(--border-primary);
             padding: 6px 12px;
@@ -137,6 +144,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
+            z-index: 3;
         }
 
         .tag-model::before {
@@ -149,10 +158,7 @@
 
         /* Navigation Header Style */
         .glyph-nav {
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: 1000;
+            z-index: 2;
         }
         
         .glyph-nav .nav-btn {
@@ -1134,6 +1140,21 @@
             .onion-skin-label {
                 font-size: 9px;
             }
+            /* Header mobile fallback */
+            .tag-model {
+                position: static;
+                transform: none;
+                margin: 8px auto;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                min-height: auto;
+            }
+            .glyph-nav {
+                align-self: flex-end;
+            }
         }
     </style>
 </head>
@@ -1148,9 +1169,9 @@
                 </div>
                 <div class="brand-subtitle">Nothing OS // LED Dot Matrix Synthesizer</div>
             </div>
-            <div class="tag-model">
-                MATRIX 13×13 (V4 COMPLIANT)
-            </div>
+            
+            <!-- CENTERED TAG -->
+            <div class="tag-model">MATRIX 13×13 (V4 COMPLIANT)</div>
             
             <!-- Navigation - ปุ่มเดียวไปหน้าอื่น -->
             <nav class="glyph-nav">
@@ -1275,7 +1296,6 @@
                         <span class="dot-indicator"></span>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <!-- ✅ UPDATED: New colored buttons -->
                         <button class="btn-import-json" id="importModalTrigger">IMPORT COMPILER JSON</button>
                         <button class="btn-compile-export" id="exportModalTrigger">COMPILE & EXPORT</button>
                     </div>
