@@ -102,7 +102,6 @@
             font-family: var(--font-doto);
         }
 
-        /* Nothing-style red dot */
         .brand-active-dot {
             width: 10px;
             height: 10px;
@@ -151,7 +150,6 @@
             border-radius: 50%;
         }
 
-        /* Navigation Header Style */
         .glyph-nav {
             position: absolute;
             top: 0;
@@ -181,7 +179,6 @@
             cursor: pointer;
         }
 
-        /* MAIN WYSIWYG LAYOUT */
         .main-layout {
             display: grid;
             grid-template-columns: 290px 1fr 390px;
@@ -208,7 +205,6 @@
             }
         }
 
-        /* CARD/WIDGET STYLING (NOTHING OS 3.0 INSPIRATION) */
         .widget {
             background: var(--bg-card);
             border: 1px solid var(--border-primary);
@@ -243,7 +239,6 @@
             display: inline-block;
         }
 
-        /* LEFT COLUMN: FILMS/FRAMES WIDGET */
         .left-column {
             display: flex;
             flex-direction: column;
@@ -259,7 +254,6 @@
             padding-right: 4px;
         }
 
-        /* Scrollbar styles to match Nothing OS dark theme */
         .frames-container::-webkit-scrollbar, .modal-content::-webkit-scrollbar {
             width: 4px;
         }
@@ -355,7 +349,6 @@
             border-bottom-color: #fff;
         }
 
-        /* Remove spinner from number input */
         .frame-card-duration-input::-webkit-outer-spin-button,
         .frame-card-duration-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -373,7 +366,6 @@
             margin-bottom: 12px;
         }
 
-        /* CENTER COLUMN: GLYPH EMULATOR */
         .emulator-container {
             display: flex;
             flex-direction: column;
@@ -393,7 +385,6 @@
             align-items: center;
         }
 
-        /* Transparent engineering lines underneath matrix */
         .phone-internal-circuits {
             position: absolute;
             top: 24px;
@@ -441,7 +432,6 @@
             box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
         }
 
-        /* Onion Skin Switch - Bottom Right of Phone Bezel */
         .onion-skin-switch {
             position: absolute;
             bottom: 24px;
@@ -507,7 +497,6 @@
             transform: translateX(16px);
         }
 
-        /* Main circular glyph cluster */
         .matrix-grid {
             display: grid;
             grid-template-columns: repeat(25, 1fr);
@@ -526,7 +515,6 @@
             position: relative;
         }
 
-        /* Visual connector details similar to real Glyph segments */
         .led-node::before {
             content: '';
             position: absolute;
@@ -555,13 +543,11 @@
             display: none;
         }
 
-        /* LED Brightness States scaling with color values */
         .led-node.lit {
             background-color: var(--glyph-active);
             box-shadow: 0 0 10px rgba(255,255,255,0.95);
         }
 
-        /* PLAYBACK AND UTILS BAR */
         .playback-widget {
             display: flex;
             align-items: center;
@@ -607,7 +593,6 @@
             font-size: 13px;
         }
 
-        /* FPS Control in Playback */
         .fps-control-inline {
             display: flex;
             align-items: center;
@@ -669,14 +654,12 @@
             transform: scale(1.25);
         }
 
-        /* RIGHT COLUMN: CONTROLS & IO */
         .right-column {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* SLIDER / ENCODER COMPONENT */
         .encoder-group {
             display: flex;
             align-items: center;
@@ -739,14 +722,12 @@
             border-bottom-color: #fff;
         }
 
-        /* GRID/TOOLS LAYOUT */
         .grid-tools {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
-        /* BUTTON DESIGN - PREMIUM RAW FLAT NOT-OS STYLING */
         .btn-raw {
             background-color: var(--bg-widget);
             border: 1px solid var(--border-primary);
@@ -805,7 +786,6 @@
             background-color: var(--bg-widget);
         }
 
-        /* KILL SWITCH - DO OVER BUTTON */
         .btn-kill-switch {
             background: linear-gradient(180deg, #8b0000 0%, #5c0000 100%);
             border: 3px solid #ff0000;
@@ -862,7 +842,6 @@
             filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
-        /* ✅ NEW: GREEN GLOW BUTTON (COMPILE & EXPORT) */
         .btn-compile-export {
             background: linear-gradient(180deg, #00d68f 0%, #008a5e 100%);
             border: 3px solid #00ff9d;
@@ -904,7 +883,6 @@
         }
         .btn-compile-export:active { transform: translateY(0); box-shadow: 0 0 15px rgba(0, 255, 157, 0.4); }
 
-        /* ✅ NEW: YELLOW GLOW BUTTON (IMPORT JSON) */
         .btn-import-json {
             background: linear-gradient(180deg, #f1c40f 0%, #b7950b 100%);
             border: 3px solid #ffd700;
@@ -946,7 +924,6 @@
         }
         .btn-import-json:active { transform: translateY(0); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
 
-        /* MODAL STYLING (NOT-OS FLOATING CARD) */
         .modal {
             position: fixed;
             top: 0;
@@ -1043,7 +1020,6 @@
             border-color: #30d158;
         }
 
-        /* FILE DRAG ZONE */
         .dropbox-not {
             border: 1px dashed var(--border-primary);
             border-radius: 16px;
@@ -1074,7 +1050,6 @@
             margin-top: 20px;
         }
 
-        /* TOAST HUD (Minimal bottom notifier) */
         .toast-not {
             position: fixed;
             bottom: 30px;
@@ -1109,7 +1084,6 @@
             border-radius: 50%;
         }
 
-        /* EXTRA FOOTER DETAILS */
         footer {
             margin-top: auto;
             border-top: 1px solid var(--border-primary);
@@ -1122,7 +1096,6 @@
             color: var(--text-secondary);
         }
 
-        /* Responsive layout adaptation */
         @media (max-width: 768px) {
             .container {
                 padding: 16px;
@@ -1148,7 +1121,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- GLOBAL APP HEADER -->
         <header>
             <div class="brand-group">
                 <div class="brand-title">
@@ -1158,27 +1130,22 @@
                 <div class="brand-subtitle">Nothing OS // LED Dot Matrix Synthesizer</div>
             </div>
             
-            <!-- Tag Model - Center -->
             <div class="tag-model">
                 MATRIX 25×25 (V1 COMPLIANT)
             </div>
             
-            <!-- Navigation - ปุ่มเดียวไปหน้าอื่น -->
             <nav class="glyph-nav">
                 <a href="index.html" class="nav-btn">Switch to Nothing 4A Pro (13×13)</a>
             </nav>
         </header>
 
-        <!-- APP INTERACTIVE LAYOUT -->
         <main class="main-layout">
-            <!-- LEFT COLUMN: FRAMES LIST & ENGINE CONTROL -->
             <section class="left-column">
                 <div class="widget">
                     <div class="widget-title">
                         FH1 : SEQUENCER
                         <span class="dot-indicator"></span>
                     </div>
-                    <!-- Frame Action Bar moved to top -->
                     <div class="frame-action-bar">
                         <button class="btn-raw primary" id="addFrameBtn">+ FRAME</button>
                         <button class="btn-raw" id="cloneFrameBtn">CLONE</button>
@@ -1187,12 +1154,10 @@
                         <button class="btn-raw accent" id="deleteFrameBtn" style="width: 100%;">DELETE CURRENT</button>
                     </div>
                     <div class="frames-container" id="framesContainer">
-                        <!-- Frame cards will render dynamically here -->
                     </div>
                 </div>
             </section>
 
-            <!-- CENTER COLUMN: MAIN HARDWARE EMULATOR -->
             <section class="emulator-container">
                 <div class="phone-bezel-emulator">
                     <div class="phone-internal-circuits"></div>
@@ -1200,11 +1165,9 @@
                     
                     <div class="grid-wrapper-circular">
                         <div class="matrix-grid" id="matrixGrid">
-                            <!-- Matrix cells initialized inside IIFE -->
                         </div>
                     </div>
 
-                    <!-- Onion Skin Switch - Bottom Right -->
                     <div class="onion-skin-switch" id="onionToggle">
                         <span class="onion-skin-label">ONION</span>
                         <div class="onion-switch-track"></div>
@@ -1221,7 +1184,6 @@
                         </div>
                     </div>
 
-                    <!-- FPS Control moved here -->
                     <div class="fps-control-inline">
                         <span class="fps-label">FPS</span>
                         <input type="number" id="fpsInput" value="8" min="1" max="60" class="fps-input-inline">
@@ -1230,7 +1192,6 @@
                 </div>
             </section>
 
-            <!-- RIGHT COLUMN: MODIFIERS AND JSON UTILS -->
             <section class="right-column">
                 <div class="widget">
                     <div class="widget-title">
@@ -1265,7 +1226,6 @@
                     </div>
                 </div>
 
-                <!-- DO OVER KILL SWITCH WIDGET -->
                 <div class="widget">
                     <div class="widget-title">
                         SYSTEM RESET
@@ -1286,7 +1246,6 @@
                         <span class="dot-indicator"></span>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <!-- ✅ UPDATED: New colored buttons -->
                         <button class="btn-import-json" id="importModalTrigger">IMPORT COMPILER JSON</button>
                         <button class="btn-compile-export" id="exportModalTrigger">COMPILE & EXPORT</button>
                     </div>
@@ -1294,14 +1253,12 @@
             </section>
         </main>
 
-        <!-- FOOTER BRANDING -->
         <footer>
             <div>DESIGNED IN LONDON // RECONSTRUCTED FOR NOTHING 3</div>
             <div>[VER 3.1.0-STABLE]</div>
         </footer>
     </div>
 
-    <!-- MODAL: IMPORT -->
     <div class="modal" id="importModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1324,7 +1281,6 @@
         </div>
     </div>
 
-    <!-- MODAL: EXPORT -->
     <div class="modal" id="exportModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1344,13 +1300,11 @@
         </div>
     </div>
 
-    <!-- GLOBAL HUD TOAST -->
     <div class="toast-not" id="toast">
         <div class="toast-dot"></div>
         <span id="toastMsg" style="font-family: var(--font-mono);">SYSTEM STANDBY</span>
     </div>
 
-    <!-- IIFE IMPLEMENTATION FOR SANDBOX ISOLATION -->
     <script>
         (function() {
             document.addEventListener('DOMContentLoaded', () => {
@@ -1358,24 +1312,23 @@
                 const DEFAULT_FPS = 8;
                 const DEFAULT_DURATION = Math.round(1000 / DEFAULT_FPS);
 
-                // Absolute count of active/wired LEDs on the Nothing 3 Matrix (25x25 circular)
+                // ✅ MODIFIED: 489 pixels (Custom Hardware Configuration)
                 const ROW_ACTIVE_COUNT = {
-                    0: 9, 24: 9,
-                    1: 13, 23: 13,
-                    2: 17, 22: 17,
-                    3: 19, 21: 19,
-                    4: 21, 20: 21,
-                    5: 23, 19: 23,
-                    6: 23, 18: 23,
-                    7: 25, 17: 25,
-                    8: 25, 16: 25,
+                    0: 7, 24: 7,
+                    1: 11, 23: 11,
+                    2: 15, 22: 15,
+                    3: 17, 21: 17,
+                    4: 19, 20: 19,
+                    5: 21, 19: 21,
+                    6: 21, 18: 21,
+                    7: 23, 17: 23,
+                    8: 23, 16: 23,
                     9: 25, 15: 25,
                     10: 25, 14: 25,
                     11: 25, 13: 25,
                     12: 25
                 };
 
-                // Build mapping between frame export index (625 elements max) and grid positions (row, col)
                 function createPixelMapping() {
                     const mappings = [];
                     let mappingIndex = 0;
@@ -1396,7 +1349,6 @@
 
                 const PIXEL_MAPPING = createPixelMapping();
 
-                // State Machine
                 let frames = [];
                 let currentFrameIndex = 0;
                 let currentColor = 255;
@@ -1405,11 +1357,9 @@
                 let isPlaying = false;
                 let playTimer = null;
                 
-                // History timeline registers for Undo/Redo operations
                 let historyRegistry = [];
                 let historyPointer = -1;
 
-                // Application Initialization
                 function applicationStart() {
                     buildHardwareGrid();
                     createNewFrame();
@@ -1417,7 +1367,6 @@
                     updateUIState();
                 }
 
-                // Check active hardware boundaries
                 function computeValidLEDState(row, col) {
                     const count = ROW_ACTIVE_COUNT[row];
                     if (count === undefined) return false;
@@ -1425,7 +1374,6 @@
                     return col >= offset && col < offset + count;
                 }
 
-                // Render Physical Matrix
                 function buildHardwareGrid() {
                     const matrixGrid = document.getElementById('matrixGrid');
                     matrixGrid.innerHTML = '';
@@ -1634,7 +1582,6 @@
                     document.getElementById('totalFramesBadge').textContent = frames.length.toString().padStart(2, '0');
                 }
 
-                // Composition Timeline History Save
                 function preserveCompositionHistory() {
                     const snap = {
                         duration: frames[currentFrameIndex].duration,
@@ -1649,7 +1596,6 @@
                     }
                 }
 
-                // Global Matrix Modifiers
                 function fillWiredHardware() {
                     const activeFrame = frames[currentFrameIndex];
                     for (let r = 0; r < GRID_SIZE; r++) {
@@ -1764,31 +1710,26 @@
                     }, 500);
                 }
 
-                // DO OVER - Complete System Reset
                 function doOverReset() {
                     if (!confirm('⚠️ WARNING: This will erase ALL frames and data.\n\nAre you sure you want to start over?')) {
                         return;
                     }
 
-                    // Stop playback if running
                     if (isPlaying) {
                         ceaseSequencer();
                     }
 
-                    // Clear all state
                     frames = [];
                     currentFrameIndex = 0;
                     historyRegistry = [];
                     historyPointer = -1;
                     onionSkinEnabled = false;
                     
-                    // Reset onion skin toggle UI
                     const onionToggle = document.getElementById('onionToggle');
                     if (onionToggle) {
                         onionToggle.classList.remove('active');
                     }
 
-                    // Reset color to default
                     currentColor = 255;
                     const colSlider = document.getElementById('colorSlider');
                     const colInput = document.getElementById('colorInput');
@@ -1801,20 +1742,17 @@
                         previewNode.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
                     }
 
-                    // Reset FPS to default
                     const fpsSlider = document.getElementById('fpsSlider');
                     const fpsInput = document.getElementById('fpsInput');
                     
                     if (fpsSlider) fpsSlider.value = DEFAULT_FPS;
                     if (fpsInput) fpsInput.value = DEFAULT_FPS;
 
-                    // Create fresh frame
                     createNewFrame();
                     
                     renderOSNotification("SYSTEM RESET COMPLETE - FRESH SESSION");
                 }
 
-                // Frame-by-Frame playback animator engine
                 function toggleSequencerState() {
                     if (isPlaying) {
                         ceaseSequencer();
@@ -1857,7 +1795,6 @@
                     }
                 }
 
-                // ONION SKIN LAYERING
                 function renderOnionGhost() {
                     if (!onionSkinEnabled || currentFrameIndex === 0) return;
 
@@ -1881,7 +1818,6 @@
                     }
                 }
 
-                // COMPILER IO: V1 COMPLIANT SPEC
                 function parseCompositionToV1() {
                     const output = {
                         v: 1,
@@ -1964,7 +1900,6 @@
                     }
                 }
 
-                // NOTIFIER SYSTEM
                 function renderOSNotification(status) {
                     const notifyHUD = document.getElementById('toast');
                     const labelHUD = document.getElementById('toastMsg');
@@ -1973,7 +1908,6 @@
                     setTimeout(() => notifyHUD.classList.remove('active'), 2500);
                 }
 
-                // EVENT REGISTRIES
                 function registerInteractiveListeners() {
                     document.getElementById('addFrameBtn').addEventListener('click', createNewFrame);
                     document.getElementById('cloneFrameBtn').addEventListener('click', cloneActiveFrame);
@@ -2036,7 +1970,6 @@
                     document.getElementById('clearBtn').addEventListener('click', clearActiveFrame);
                     document.getElementById('flashTemplateBtn').addEventListener('click', triggerLEDTestPulse);
 
-                    // DO OVER KILL SWITCH
                     document.getElementById('doOverBtn').addEventListener('click', doOverReset);
 
                     const importModal = document.getElementById('importModal');
