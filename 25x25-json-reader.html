@@ -79,14 +79,13 @@
             border-bottom: 1px dashed var(--border-primary);
             padding-bottom: 16px;
             position: relative;
-            min-height: 48px;
         }
 
         .brand-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
-            z-index: 2;
+            flex: 1;
         }
 
         .brand-title {
@@ -127,12 +126,7 @@
             letter-spacing: 0.05em;
         }
 
-        /* CENTERED TAG MODEL */
         .tag-model {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             background-color: var(--bg-card);
             border: 1px solid var(--border-primary);
             padding: 6px 12px;
@@ -144,8 +138,9 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            white-space: nowrap;
-            z-index: 3;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .tag-model::before {
@@ -158,7 +153,10 @@
 
         /* Navigation Header Style */
         .glyph-nav {
-            z-index: 2;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 1000;
         }
         
         .glyph-nav .nav-btn {
@@ -207,20 +205,6 @@
             }
             .left-column {
                 grid-column: span 1;
-            }
-            .tag-model {
-                position: static;
-                transform: none;
-                margin-top: 8px;
-            }
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .glyph-nav {
-                align-self: flex-end;
-                margin-top: -30px;
             }
         }
 
@@ -447,7 +431,7 @@
         .grid-wrapper-circular {
             position: relative;
             width: 100%;
-            max-width: 520px;
+            max-width: 460px;
             aspect-ratio: 1;
             background: repeating-conic-gradient(#1a1a1a 0% 25%, #0d0d0d 0% 50%) 0 0 / 20px 20px;
             border: 1px solid #1d1d1f;
@@ -523,7 +507,7 @@
             transform: translateX(16px);
         }
 
-        /* Main circular glyph cluster 25x25 */
+        /* Main circular glyph cluster */
         .matrix-grid {
             display: grid;
             grid-template-columns: repeat(25, 1fr);
@@ -542,8 +526,21 @@
             position: relative;
         }
 
+        /* Visual connector details similar to real Glyph segments */
+        .led-node::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 70%;
+            height: 70%;
+            border-radius: 1px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.12s ease;
+        }
+
         .led-node:hover:not(.null-zone) {
-            transform: scale(1.15);
+            transform: scale(1.1);
             background: #2c2c2e;
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
             z-index: 3;
@@ -554,10 +551,14 @@
             cursor: default!important;
         }
 
+        .led-node.null-zone::before {
+            display: none;
+        }
+
         /* LED Brightness States scaling with color values */
         .led-node.lit {
             background-color: var(--glyph-active);
-            box-shadow: 0 0 14px rgba(255,255,255,0.95);
+            box-shadow: 0 0 10px rgba(255,255,255,0.95);
         }
 
         /* PLAYBACK AND UTILS BAR */
@@ -1137,6 +1138,11 @@
             .onion-skin-label {
                 font-size: 9px;
             }
+            .tag-model {
+                position: static;
+                transform: none;
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
@@ -1152,8 +1158,10 @@
                 <div class="brand-subtitle">Nothing OS // LED Dot Matrix Synthesizer</div>
             </div>
             
-            <!-- CENTERED TAG -->
-            <div class="tag-model">MATRIX 25×25 (V1 COMPLIANT)</div>
+            <!-- Tag Model - Center -->
+            <div class="tag-model">
+                MATRIX 25×25 (V1 COMPLIANT)
+            </div>
             
             <!-- Navigation - ปุ่มเดียวไปหน้าอื่น -->
             <nav class="glyph-nav">
@@ -1170,6 +1178,7 @@
                         FH1 : SEQUENCER
                         <span class="dot-indicator"></span>
                     </div>
+                    <!-- Frame Action Bar moved to top -->
                     <div class="frame-action-bar">
                         <button class="btn-raw primary" id="addFrameBtn">+ FRAME</button>
                         <button class="btn-raw" id="cloneFrameBtn">CLONE</button>
@@ -1277,6 +1286,7 @@
                         <span class="dot-indicator"></span>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- ✅ UPDATED: New colored buttons -->
                         <button class="btn-import-json" id="importModalTrigger">IMPORT COMPILER JSON</button>
                         <button class="btn-compile-export" id="exportModalTrigger">COMPILE & EXPORT</button>
                     </div>
@@ -1348,19 +1358,36 @@
                 const DEFAULT_FPS = 8;
                 const DEFAULT_DURATION = Math.round(1000 / DEFAULT_FPS);
 
-                // Full 25x25 grid mapping (V1 Format)
-                // Adjust ROW_ACTIVE_COUNT if hardware has specific cutouts, otherwise full matrix
-                const ROW_ACTIVE_COUNT = {};
-                for(let i=0; i<GRID_SIZE; i++) ROW_ACTIVE_COUNT[i] = GRID_SIZE;
+                // Absolute count of active/wired LEDs on the Nothing 3 Matrix (25x25 circular)
+                const ROW_ACTIVE_COUNT = {
+                    0: 9, 24: 9,
+                    1: 13, 23: 13,
+                    2: 17, 22: 17,
+                    3: 19, 21: 19,
+                    4: 21, 20: 21,
+                    5: 23, 19: 23,
+                    6: 23, 18: 23,
+                    7: 25, 17: 25,
+                    8: 25, 16: 25,
+                    9: 25, 15: 25,
+                    10: 25, 14: 25,
+                    11: 25, 13: 25,
+                    12: 25
+                };
 
+                // Build mapping between frame export index (625 elements max) and grid positions (row, col)
                 function createPixelMapping() {
                     const mappings = [];
                     let mappingIndex = 0;
                     for (let row = 0; row < GRID_SIZE; row++) {
-                        const count = ROW_ACTIVE_COUNT[row] || GRID_SIZE;
+                        const count = ROW_ACTIVE_COUNT[row];
                         const offset = Math.floor((GRID_SIZE - count) / 2);
                         for (let col = offset; col < offset + count; col++) {
-                            mappings.push({ linearIndex: mappingIndex, row, col });
+                            mappings.push({
+                                linearIndex: mappingIndex,
+                                row: row,
+                                col: col
+                            });
                             mappingIndex++;
                         }
                     }
@@ -1377,9 +1404,12 @@
                 let onionSkinEnabled = false;
                 let isPlaying = false;
                 let playTimer = null;
+                
+                // History timeline registers for Undo/Redo operations
                 let historyRegistry = [];
                 let historyPointer = -1;
 
+                // Application Initialization
                 function applicationStart() {
                     buildHardwareGrid();
                     createNewFrame();
@@ -1387,6 +1417,7 @@
                     updateUIState();
                 }
 
+                // Check active hardware boundaries
                 function computeValidLEDState(row, col) {
                     const count = ROW_ACTIVE_COUNT[row];
                     if (count === undefined) return false;
@@ -1394,15 +1425,18 @@
                     return col >= offset && col < offset + count;
                 }
 
+                // Render Physical Matrix
                 function buildHardwareGrid() {
                     const matrixGrid = document.getElementById('matrixGrid');
                     matrixGrid.innerHTML = '';
+
                     for (let row = 0; row < GRID_SIZE; row++) {
                         for (let col = 0; col < GRID_SIZE; col++) {
                             const node = document.createElement('div');
                             node.className = 'led-node';
                             node.dataset.row = row;
                             node.dataset.col = col;
+
                             if (!computeValidLEDState(row, col)) {
                                 node.classList.add('null-zone');
                             } else {
@@ -1455,7 +1489,7 @@
                         if (rawLumStrength > 0) {
                             node.classList.add('lit');
                             node.style.backgroundColor = `rgba(${rawLumStrength}, ${rawLumStrength}, ${rawLumStrength}, 1)`;
-                            node.style.boxShadow = `0 0 14px rgba(${rawLumStrength}, ${rawLumStrength}, ${rawLumStrength}, .8)`;
+                            node.style.boxShadow = `0 0 10px rgba(${rawLumStrength}, ${rawLumStrength}, ${rawLumStrength}, .8)`;
                         } else {
                             node.classList.remove('lit');
                             node.style.backgroundColor = '';
@@ -1479,7 +1513,10 @@
                 }
 
                 function createNewFrame() {
-                    const emptyFrame = { duration: DEFAULT_DURATION, pixels: new Array(GRID_SIZE * GRID_SIZE).fill(0) };
+                    const emptyFrame = {
+                        duration: DEFAULT_DURATION,
+                        pixels: new Array(GRID_SIZE * GRID_SIZE).fill(0)
+                    };
                     frames.push(emptyFrame);
                     currentFrameIndex = frames.length - 1;
                     displayFrameCanvas();
@@ -1489,7 +1526,10 @@
                 function cloneActiveFrame() {
                     if (frames.length === 0) return;
                     const parentFrame = frames[currentFrameIndex];
-                    const clonedDetails = { duration: parentFrame.duration, pixels: [...parentFrame.pixels] };
+                    const clonedDetails = {
+                        duration: parentFrame.duration,
+                        pixels: [...parentFrame.pixels]
+                    };
                     frames.splice(currentFrameIndex + 1, 0, clonedDetails);
                     currentFrameIndex++;
                     displayFrameCanvas();
@@ -1498,9 +1538,14 @@
                 }
 
                 function deleteActiveFrame() {
-                    if (frames.length <= 1) { renderOSNotification("CANNOT PURGE LAST FRAME"); return; }
+                    if (frames.length <= 1) {
+                        renderOSNotification("CANNOT PURGE LAST FRAME");
+                        return;
+                    }
                     frames.splice(currentFrameIndex, 1);
-                    if (currentFrameIndex >= frames.length) currentFrameIndex = frames.length - 1;
+                    if (currentFrameIndex >= frames.length) {
+                        currentFrameIndex = frames.length - 1;
+                    }
                     displayFrameCanvas();
                     updateUIState();
                     renderOSNotification("FRAME DELETED");
@@ -1509,41 +1554,77 @@
                 function rebuildMiniThumbnails() {
                     const wrapper = document.getElementById('framesContainer');
                     wrapper.innerHTML = '';
+
                     frames.forEach((frame, idx) => {
                         const cell = document.createElement('div');
                         cell.className = `frame-card ${idx === currentFrameIndex ? 'active' : ''}`;
-                        const drawWrap = document.createElement('div'); drawWrap.className = 'thumbnail-wrapper';
+
+                        const drawWrap = document.createElement('div');
+                        drawWrap.className = 'thumbnail-wrapper';
+
                         const miniCanvas = document.createElement('canvas');
-                        miniCanvas.width = GRID_SIZE; miniCanvas.height = GRID_SIZE;
+                        miniCanvas.width = GRID_SIZE;
+                        miniCanvas.height = GRID_SIZE;
                         const renderer = miniCanvas.getContext('2d');
-                        renderer.fillStyle = '#0a0a0a'; renderer.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
+                        renderer.fillStyle = '#0a0a0a';
+                        renderer.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
+
                         for (let r = 0; r < GRID_SIZE; r++) {
                             for (let c = 0; c < GRID_SIZE; c++) {
                                 if (computeValidLEDState(r, c)) {
                                     const lum = frame.pixels[r * GRID_SIZE + c];
-                                    if (lum > 0) { renderer.fillStyle = `rgb(${lum},${lum},${lum})`; renderer.fillRect(c, r, 1, 1); }
+                                    if (lum > 0) {
+                                        renderer.fillStyle = `rgb(${lum}, ${lum}, ${lum})`;
+                                        renderer.fillRect(c, r, 1, 1);
+                                    }
                                 }
                             }
                         }
                         drawWrap.appendChild(miniCanvas);
-                        const labels = document.createElement('div'); labels.className = 'frame-card-details';
-                        const orderNo = document.createElement('div'); orderNo.className = 'frame-card-name';
+
+                        const labels = document.createElement('div');
+                        labels.className = 'frame-card-details';
+
+                        const orderNo = document.createElement('div');
+                        orderNo.className = 'frame-card-name';
                         orderNo.textContent = `F${(idx+1).toString().padStart(2, '0')}`;
-                        const metas = document.createElement('div'); metas.className = 'frame-card-meta';
-                        const durLabel = document.createElement('span'); durLabel.className = 'ms-badge';
-                        durLabel.textContent = `${Math.round(1000 / frame.duration)}fps`;
-                        metas.appendChild(durLabel); labels.appendChild(orderNo); labels.appendChild(metas);
+
+                        const metas = document.createElement('div');
+                        metas.className = 'frame-card-meta';
+
+                        const durLabel = document.createElement('span');
+                        durLabel.className = 'ms-badge';
+                        const fpsValue = Math.round(1000 / frame.duration);
+                        durLabel.textContent = `${fpsValue}fps`;
+
+                        metas.appendChild(durLabel);
+                        labels.appendChild(orderNo);
+                        labels.appendChild(metas);
+
                         const frameDelayField = document.createElement('input');
-                        frameDelayField.type = 'number'; frameDelayField.className = 'frame-card-duration-input';
-                        frameDelayField.value = Math.round(1000 / frame.duration); frameDelayField.min = 1; frameDelayField.max = 60;
+                        frameDelayField.type = 'number';
+                        frameDelayField.className = 'frame-card-duration-input';
+                        frameDelayField.value = Math.round(1000 / frame.duration);
+                        frameDelayField.min = 1;
+                        frameDelayField.max = 60;
                         frameDelayField.addEventListener('change', (e) => {
-                            let fpsVal = Math.max(1, Math.min(60, parseInt(e.target.value) || DEFAULT_FPS));
+                            let fpsVal = parseInt(e.target.value) || DEFAULT_FPS;
+                            fpsVal = Math.max(1, Math.min(60, fpsVal));
                             frame.duration = Math.round(1000 / fpsVal);
                             durLabel.textContent = `${fpsVal}fps`;
                         });
                         frameDelayField.addEventListener('click', (e) => e.stopPropagation());
-                        cell.appendChild(drawWrap); cell.appendChild(labels); cell.appendChild(frameDelayField);
-                        cell.addEventListener('click', () => { currentFrameIndex = idx; displayFrameCanvas(); updateUIState(); });
+
+                        cell.appendChild(drawWrap);
+                        cell.appendChild(labels);
+                        cell.appendChild(frameDelayField);
+
+                        cell.addEventListener('click', () => {
+                            currentFrameIndex = idx;
+                            displayFrameCanvas();
+                            updateUIState();
+                        });
+
                         wrapper.appendChild(cell);
                     });
                 }
@@ -1553,126 +1634,337 @@
                     document.getElementById('totalFramesBadge').textContent = frames.length.toString().padStart(2, '0');
                 }
 
+                // Composition Timeline History Save
                 function preserveCompositionHistory() {
-                    const snap = { duration: frames[currentFrameIndex].duration, pixels: [...frames[currentFrameIndex].pixels] };
+                    const snap = {
+                        duration: frames[currentFrameIndex].duration,
+                        pixels: [...frames[currentFrameIndex].pixels]
+                    };
                     historyRegistry = historyRegistry.slice(0, historyPointer + 1);
                     historyRegistry.push({ idx: currentFrameIndex, instance: snap });
                     historyPointer++;
-                    if (historyRegistry.length > 30) { historyRegistry.shift(); historyPointer--; }
+                    if (historyRegistry.length > 30) {
+                        historyRegistry.shift();
+                        historyPointer--;
+                    }
                 }
 
+                // Global Matrix Modifiers
                 function fillWiredHardware() {
-                    const f = frames[currentFrameIndex];
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) f.pixels[r * GRID_SIZE + c] = currentColor;
-                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("MATRIX INTENSITY MAXIMIZED");
+                    const activeFrame = frames[currentFrameIndex];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                activeFrame.pixels[r * GRID_SIZE + c] = currentColor;
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("MATRIX INTENSITY MAXIMIZED");
                 }
+
                 function invertActiveWired() {
-                    const f = frames[currentFrameIndex];
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) f.pixels[r * GRID_SIZE + c] = 255 - f.pixels[r * GRID_SIZE + c];
-                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("MATRIX INVERTED");
+                    const activeFrame = frames[currentFrameIndex];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const idx = r * GRID_SIZE + c;
+                                activeFrame.pixels[idx] = 255 - activeFrame.pixels[idx];
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("MATRIX INVERTED");
                 }
+
                 function mirrorActiveHardware() {
-                    const f = frames[currentFrameIndex]; const temp = [...f.pixels];
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) {
-                        const mc = GRID_SIZE - 1 - c; if (computeValidLEDState(r, mc)) f.pixels[r * GRID_SIZE + mc] = temp[r * GRID_SIZE + c];
+                    const activeFrame = frames[currentFrameIndex];
+                    const temp = [...activeFrame.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const mirroredCol = GRID_SIZE - 1 - c;
+                                if (computeValidLEDState(r, mirroredCol)) {
+                                    activeFrame.pixels[r * GRID_SIZE + mirroredCol] = temp[r * GRID_SIZE + c];
+                                }
+                            }
+                        }
                     }
-                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("MIRRORED SYMMETRY ENFORCED");
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("MIRRORED SYMMETRY ENFORCED");
                 }
+
                 function flipActiveHardware() {
-                    const f = frames[currentFrameIndex]; const temp = [...f.pixels];
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) {
-                        const fr = GRID_SIZE - 1 - r; if (computeValidLEDState(fr, c)) f.pixels[fr * GRID_SIZE + c] = temp[r * GRID_SIZE + c];
+                    const activeFrame = frames[currentFrameIndex];
+                    const temp = [...activeFrame.pixels];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const flippedRow = GRID_SIZE - 1 - r;
+                                if (computeValidLEDState(flippedRow, c)) {
+                                    activeFrame.pixels[flippedRow * GRID_SIZE + c] = temp[r * GRID_SIZE + c];
+                                }
+                            }
+                        }
                     }
-                    displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("VERTICAL FLIP");
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("VERTICAL FLIP");
                 }
+
                 function rotateActiveHardware() {
-                    const f = frames[currentFrameIndex]; const temp = [...f.pixels]; const rotated = new Array(GRID_SIZE * GRID_SIZE).fill(0);
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) {
-                        const nr = c, nc = GRID_SIZE - 1 - r; if (computeValidLEDState(nr, nc)) rotated[nr * GRID_SIZE + nc] = temp[r * GRID_SIZE + c];
+                    const activeFrame = frames[currentFrameIndex];
+                    const temp = [...activeFrame.pixels];
+                    const rotated = new Array(GRID_SIZE * GRID_SIZE).fill(0);
+                    
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        for (let c = 0; c < GRID_SIZE; c++) {
+                            if (computeValidLEDState(r, c)) {
+                                const newRow = c;
+                                const newCol = GRID_SIZE - 1 - r;
+                                if (computeValidLEDState(newRow, newCol)) {
+                                    rotated[newRow * GRID_SIZE + newCol] = temp[r * GRID_SIZE + c];
+                                }
+                            }
+                        }
                     }
-                    f.pixels = rotated; displayFrameCanvas(); preserveCompositionHistory(); renderOSNotification("ROTATE 90° CW");
+                    activeFrame.pixels = rotated;
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
+                    renderOSNotification("ROTATE 90° CW");
                 }
+
                 function clearActiveFrame() {
-                    frames[currentFrameIndex].pixels.fill(0); displayFrameCanvas(); preserveCompositionHistory();
+                    const activeFrame = frames[currentFrameIndex];
+                    activeFrame.pixels.fill(0);
+                    displayFrameCanvas();
+                    preserveCompositionHistory();
                 }
+
                 function triggerLEDTestPulse() {
-                    const frame = frames[currentFrameIndex]; const temp = [...frame.pixels];
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) if (computeValidLEDState(r, c)) frame.pixels[r * GRID_SIZE + c] = 255;
-                    displayFrameCanvas(); renderOSNotification("PULSATOR CALIBRATING...");
-                    setTimeout(() => { frame.pixels = temp; displayFrameCanvas(); }, 500);
+                    const frame = frames[currentFrameIndex];
+                    const tempRecord = [...frame.pixels];
+                    
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        for (let col = 0; col < GRID_SIZE; col++) {
+                            if (computeValidLEDState(row, col)) {
+                                frame.pixels[row * GRID_SIZE + col] = 255;
+                            }
+                        }
+                    }
+                    displayFrameCanvas();
+                    renderOSNotification("PULSATOR CALIBRATING...");
+                    
+                    setTimeout(() => {
+                        frame.pixels = tempRecord;
+                        displayFrameCanvas();
+                    }, 500);
                 }
 
+                // DO OVER - Complete System Reset
                 function doOverReset() {
-                    if (!confirm('⚠️ WARNING: This will erase ALL frames and data.\n\nAre you sure you want to start over?')) return;
-                    if (isPlaying) ceaseSequencer();
-                    frames = []; currentFrameIndex = 0; historyRegistry = []; historyPointer = -1; onionSkinEnabled = false;
-                    document.getElementById('onionToggle').classList.remove('active');
+                    if (!confirm('⚠️ WARNING: This will erase ALL frames and data.\n\nAre you sure you want to start over?')) {
+                        return;
+                    }
+
+                    // Stop playback if running
+                    if (isPlaying) {
+                        ceaseSequencer();
+                    }
+
+                    // Clear all state
+                    frames = [];
+                    currentFrameIndex = 0;
+                    historyRegistry = [];
+                    historyPointer = -1;
+                    onionSkinEnabled = false;
+                    
+                    // Reset onion skin toggle UI
+                    const onionToggle = document.getElementById('onionToggle');
+                    if (onionToggle) {
+                        onionToggle.classList.remove('active');
+                    }
+
+                    // Reset color to default
                     currentColor = 255;
-                    document.getElementById('colorSlider').value = 255;
-                    document.getElementById('colorInput').value = 255;
-                    const p = document.getElementById('colorPreview');
-                    p.style.backgroundColor = '#fff'; p.style.boxShadow = '0 0 14px rgba(255,255,255,0.8)';
-                    document.getElementById('fpsSlider').value = DEFAULT_FPS;
-                    document.getElementById('fpsInput').value = DEFAULT_FPS;
-                    createNewFrame(); renderOSNotification("SYSTEM RESET COMPLETE - FRESH SESSION");
+                    const colSlider = document.getElementById('colorSlider');
+                    const colInput = document.getElementById('colorInput');
+                    const previewNode = document.getElementById('colorPreview');
+                    
+                    if (colSlider) colSlider.value = 255;
+                    if (colInput) colInput.value = 255;
+                    if (previewNode) {
+                        previewNode.style.backgroundColor = 'rgb(255, 255, 255)';
+                        previewNode.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                    }
+
+                    // Reset FPS to default
+                    const fpsSlider = document.getElementById('fpsSlider');
+                    const fpsInput = document.getElementById('fpsInput');
+                    
+                    if (fpsSlider) fpsSlider.value = DEFAULT_FPS;
+                    if (fpsInput) fpsInput.value = DEFAULT_FPS;
+
+                    // Create fresh frame
+                    createNewFrame();
+                    
+                    renderOSNotification("SYSTEM RESET COMPLETE - FRESH SESSION");
                 }
 
+                // Frame-by-Frame playback animator engine
                 function toggleSequencerState() {
-                    if (isPlaying) { ceaseSequencer(); return; }
+                    if (isPlaying) {
+                        ceaseSequencer();
+                        return;
+                    }
+
                     if (frames.length === 0) return;
+
                     isPlaying = true;
                     document.getElementById('playBtn').textContent = '⏸';
                     document.getElementById('playBtn').style.backgroundColor = 'var(--accent-red)';
                     document.getElementById('playBtn').style.color = '#fff';
                     renderOSNotification("SEQUENCER TRANSMITTING");
-                    let seq = 0;
+
+                    let frameTimerSequence = 0;
                     function engineTick() {
                         if (!isPlaying) return;
-                        currentFrameIndex = seq; displayFrameCanvas(); updateUIState();
-                        const dur = frames[seq].duration || DEFAULT_DURATION;
-                        playTimer = setTimeout(() => { seq = (seq + 1) % frames.length; engineTick(); }, dur);
+                        currentFrameIndex = frameTimerSequence;
+                        displayFrameCanvas();
+                        updateUIState();
+                        
+                        const currentFrameDuration = frames[frameTimerSequence].duration || DEFAULT_DURATION;
+                        playTimer = setTimeout(() => {
+                            frameTimerSequence = (frameTimerSequence + 1) % frames.length;
+                            engineTick();
+                        }, currentFrameDuration);
                     }
                     engineTick();
                 }
+
                 function ceaseSequencer() {
                     isPlaying = false;
                     document.getElementById('playBtn').textContent = '▶';
                     document.getElementById('playBtn').style.backgroundColor = 'var(--text-primary)';
                     document.getElementById('playBtn').style.color = 'var(--bg-pure)';
                     renderOSNotification("SEQUENCER IDLE");
-                    if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+                    if (playTimer) {
+                        clearTimeout(playTimer);
+                        playTimer = null;
+                    }
                 }
 
+                // ONION SKIN LAYERING
                 function renderOnionGhost() {
                     if (!onionSkinEnabled || currentFrameIndex === 0) return;
-                    const prev = frames[currentFrameIndex - 1];
-                    for (let r = 0; r < GRID_SIZE; r++) for (let c = 0; c < GRID_SIZE; c++) {
-                        if (computeValidLEDState(r, c)) {
-                            const idx = r * GRID_SIZE + c;
-                            if (frames[currentFrameIndex].pixels[idx] === 0 && prev.pixels[idx] > 0) {
-                                const node = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
-                                if (node) { node.style.backgroundColor = `rgba(255, 59, 48, 0.25)`; node.style.boxShadow = `inset 0 0 4px rgba(255, 59, 48, 0.4)`; }
+
+                    const precedingNodeFrame = frames[currentFrameIndex - 1];
+                    for (let row = 0; row < GRID_SIZE; row++) {
+                        for (let col = 0; col < GRID_SIZE; col++) {
+                            if (computeValidLEDState(row, col)) {
+                                const matrixIndex = row * GRID_SIZE + col;
+                                const activeValue = frames[currentFrameIndex].pixels[matrixIndex];
+                                const traceValue = precedingNodeFrame.pixels[matrixIndex];
+
+                                if (activeValue === 0 && traceValue > 0) {
+                                    const node = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                                    if (node) {
+                                        node.style.backgroundColor = `rgba(255, 59, 48, 0.25)`;
+                                        node.style.boxShadow = `inset 0 0 4px rgba(255, 59, 48, 0.4)`;
+                                    }
+                                }
                             }
                         }
                     }
                 }
 
+                // COMPILER IO: V1 COMPLIANT SPEC
                 function parseCompositionToV1() {
-                    const output = { v: 1, frames: frames.map(f => ({ d: f.duration, p: f.pixels })) };
+                    const output = {
+                        v: 1,
+                        frames: frames.map(f => {
+                            const serializedData = [];
+                            PIXEL_MAPPING.forEach(({ row, col }) => {
+                                serializedData.push(f.pixels[row * GRID_SIZE + col]);
+                            });
+                            return {
+                                d: f.duration,
+                                p: serializedData
+                            };
+                        })
+                    };
                     return JSON.stringify(output);
                 }
 
                 function loadV1Composition(jsonCode) {
                     try {
                         const parsed = JSON.parse(jsonCode);
-                        if (Number(parsed.v) !== 1) { renderOSNotification("LOAD REJECTED: REQUIRES V1 SOURCE"); return false; }
-                        if (!parsed.frames || !Array.isArray(parsed.frames)) { renderOSNotification("LOAD ERROR: STRUCT DISCREPANCY"); return false; }
-                        frames = parsed.frames.map(fr => ({ duration: fr.d || DEFAULT_DURATION, pixels: [...fr.p] }));
-                        currentFrameIndex = 0; historyRegistry = []; historyPointer = -1;
-                        displayFrameCanvas(); updateUIState(); renderOSNotification("SOURCE RECONSTRUCTION STABLE"); return true;
-                    } catch (err) { renderOSNotification("PARSING ERROR: INVALID JSON"); return false; }
+                        let verifiedVer = parsed.v;
+                        if (verifiedVer === undefined) {
+                            const findAlternativeKeys = Object.keys(parsed);
+                            const keyMatch = findAlternativeKeys.find(k => k.trim() === 'v');
+                            if (keyMatch) verifiedVer = parsed[keyMatch];
+                        }
+
+                        if (Number(verifiedVer) !== 1) {
+                            renderOSNotification("LOAD REJECTED: REQUIRES V1 SOURCE");
+                            return false;
+                        }
+
+                        let targetFrames = parsed.frames;
+                        if (!targetFrames) {
+                            const keys = Object.keys(parsed);
+                            const foundKey = keys.find(k => k.trim() === 'frames');
+                            if (foundKey) targetFrames = parsed[foundKey];
+                        }
+
+                        if (!targetFrames || !Array.isArray(targetFrames)) {
+                            renderOSNotification("LOAD ERROR: STRUCT DISCREPANCY");
+                            return false;
+                        }
+
+                        frames = targetFrames.map(nodeRawFrame => {
+                            const reconstructedMap = new Array(GRID_SIZE * GRID_SIZE).fill(0);
+                            let durRaw = nodeRawFrame.d;
+                            let pMapArray = nodeRawFrame.p;
+
+                            if (durRaw === undefined || pMapArray === undefined) {
+                                const keys = Object.keys(nodeRawFrame);
+                                const dKey = keys.find(k => k.trim() === 'd');
+                                const pKey = keys.find(k => k.trim() === 'p');
+                                if (dKey) durRaw = nodeRawFrame[dKey];
+                                if (pKey) pMapArray = nodeRawFrame[pKey];
+                            }
+
+                            PIXEL_MAPPING.forEach(({ linearIndex, row, col }) => {
+                                if (pMapArray && linearIndex < pMapArray.length) {
+                                    reconstructedMap[row * GRID_SIZE + col] = pMapArray[linearIndex];
+                                }
+                            });
+
+                            return {
+                                duration: durRaw || DEFAULT_DURATION,
+                                pixels: reconstructedMap
+                            };
+                        });
+
+                        currentFrameIndex = 0;
+                        historyRegistry = [];
+                        historyPointer = -1;
+                        displayFrameCanvas();
+                        updateUIState();
+                        renderOSNotification("SOURCE RECONSTRUCTION STABLE");
+                        return true;
+                    } catch (err) {
+                        renderOSNotification("PARSING ERROR: INVALID JSON");
+                        return false;
+                    }
                 }
 
+                // NOTIFIER SYSTEM
                 function renderOSNotification(status) {
                     const notifyHUD = document.getElementById('toast');
                     const labelHUD = document.getElementById('toastMsg');
@@ -1681,37 +1973,59 @@
                     setTimeout(() => notifyHUD.classList.remove('active'), 2500);
                 }
 
+                // EVENT REGISTRIES
                 function registerInteractiveListeners() {
                     document.getElementById('addFrameBtn').addEventListener('click', createNewFrame);
                     document.getElementById('cloneFrameBtn').addEventListener('click', cloneActiveFrame);
                     document.getElementById('deleteFrameBtn').addEventListener('click', deleteActiveFrame);
+                    
                     document.getElementById('playBtn').addEventListener('click', toggleSequencerState);
+                    
                     document.getElementById('onionToggle').addEventListener('click', function() {
-                        this.classList.toggle('active'); onionSkinEnabled = this.classList.contains('active'); displayFrameCanvas();
+                        this.classList.toggle('active');
+                        onionSkinEnabled = this.classList.contains('active');
+                        displayFrameCanvas();
                     });
 
                     const colSlider = document.getElementById('colorSlider');
                     const colInput = document.getElementById('colorInput');
                     const previewNode = document.getElementById('colorPreview');
-                    function changeColor(val) {
-                        currentColor = Math.max(0, Math.min(255, val));
-                        colSlider.value = currentColor; colInput.value = currentColor;
-                        previewNode.style.backgroundColor = `rgb(${currentColor},${currentColor},${currentColor})`;
-                        previewNode.style.boxShadow = `0 0 14px rgba(${currentColor},${currentColor},${currentColor},0.8)`;
+
+                    function changeLocalActiveColor(intensity) {
+                        currentColor = Math.max(0, Math.min(255, intensity));
+                        colSlider.value = currentColor;
+                        colInput.value = currentColor;
+                        previewNode.style.backgroundColor = `rgb(${currentColor}, ${currentColor}, ${currentColor})`;
+                        previewNode.style.boxShadow = `0 0 10px rgba(${currentColor}, ${currentColor}, ${currentColor}, 0.8)`;
                     }
-                    colSlider.addEventListener('input', (e) => changeColor(parseInt(e.target.value) >= 250 ? 255 : parseInt(e.target.value)));
-                    colInput.addEventListener('change', (e) => changeColor(parseInt(e.target.value) || 0));
+
+                    colSlider.addEventListener('input', (e) => {
+                        let stepVal = parseInt(e.target.value);
+                        if (stepVal >= 250) stepVal = 255;
+                        changeLocalActiveColor(stepVal);
+                    });
+
+                    colInput.addEventListener('change', (e) => {
+                        let fieldVal = parseInt(e.target.value) || 0;
+                        changeLocalActiveColor(fieldVal);
+                    });
 
                     const fpsSlider = document.getElementById('fpsSlider');
                     const fpsInput = document.getElementById('fpsInput');
+
                     fpsSlider.addEventListener('input', (e) => {
-                        const fps = parseInt(e.target.value); fpsInput.value = fps;
-                        frames.forEach(f => f.duration = Math.round(1000 / fps)); rebuildMiniThumbnails();
+                        const targetFPS = parseInt(e.target.value);
+                        fpsInput.value = targetFPS;
+                        frames.forEach(f => f.duration = Math.round(1000 / targetFPS));
+                        rebuildMiniThumbnails();
                     });
+
                     fpsInput.addEventListener('change', (e) => {
-                        const fps = Math.max(1, Math.min(60, parseInt(e.target.value) || DEFAULT_FPS));
-                        fpsInput.value = fps; fpsSlider.value = fps;
-                        frames.forEach(f => f.duration = Math.round(1000 / fps)); rebuildMiniThumbnails();
+                        const targetFPS = Math.max(1, Math.min(60, parseInt(e.target.value) || DEFAULT_FPS));
+                        fpsInput.value = targetFPS;
+                        fpsSlider.value = targetFPS;
+                        frames.forEach(f => f.duration = Math.round(1000 / targetFPS));
+                        rebuildMiniThumbnails();
                     });
 
                     document.getElementById('fillBtn').addEventListener('click', fillWiredHardware);
@@ -1721,47 +2035,110 @@
                     document.getElementById('rotateBtn').addEventListener('click', rotateActiveHardware);
                     document.getElementById('clearBtn').addEventListener('click', clearActiveFrame);
                     document.getElementById('flashTemplateBtn').addEventListener('click', triggerLEDTestPulse);
+
+                    // DO OVER KILL SWITCH
                     document.getElementById('doOverBtn').addEventListener('click', doOverReset);
 
                     const importModal = document.getElementById('importModal');
                     const exportModal = document.getElementById('exportModal');
-                    document.getElementById('importModalTrigger').addEventListener('click', () => { document.getElementById('importRawTextarea').value = ''; importModal.classList.add('active'); });
-                    document.getElementById('exportModalTrigger').addEventListener('click', () => { document.getElementById('exportRawTextarea').value = parseCompositionToV1(); exportModal.classList.add('active'); });
-                    document.getElementById('closeImportBtn').addEventListener('click', () => importModal.classList.remove('active'));
-                    document.getElementById('cancelImportBtn').addEventListener('click', () => importModal.classList.remove('active'));
-                    document.getElementById('closeExportBtn').addEventListener('click', () => exportModal.classList.remove('active'));
-                    document.getElementById('executeImportBtn').addEventListener('click', () => { if (loadV1Composition(document.getElementById('importRawTextarea').value)) importModal.classList.remove('active'); });
+
+                    document.getElementById('importModalTrigger').addEventListener('click', () => {
+                        document.getElementById('importRawTextarea').value = '';
+                        importModal.classList.add('active');
+                    });
+
+                    document.getElementById('exportModalTrigger').addEventListener('click', () => {
+                        const payload = parseCompositionToV1();
+                        document.getElementById('exportRawTextarea').value = payload;
+                        exportModal.classList.add('active');
+                    });
+
+                    document.getElementById('closeImportBtn').addEventListener('click', () => {
+                        importModal.classList.remove('active');
+                    });
+                    document.getElementById('cancelImportBtn').addEventListener('click', () => {
+                        importModal.classList.remove('active');
+                    });
+
+                    document.getElementById('closeExportBtn').addEventListener('click', () => {
+                        exportModal.classList.remove('active');
+                    });
+
+                    document.getElementById('executeImportBtn').addEventListener('click', () => {
+                        const strInput = document.getElementById('importRawTextarea').value;
+                        if (loadV1Composition(strInput)) {
+                            importModal.classList.remove('active');
+                        }
+                    });
 
                     const dropRegion = document.getElementById('dropzone');
                     const fileLoader = document.getElementById('fileLoader');
+
                     dropRegion.addEventListener('click', () => fileLoader.click());
-                    fileLoader.addEventListener('change', (e) => { if (e.target.files[0]) performLocalFileExtraction(e.target.files[0]); });
-                    dropRegion.addEventListener('dragover', (e) => { e.preventDefault(); dropRegion.style.borderColor = '#fff'; dropRegion.style.background = '#121212'; });
-                    dropRegion.addEventListener('dragleave', () => { dropRegion.style.borderColor = 'var(--border-primary)'; dropRegion.style.background = 'var(--bg-widget)'; });
-                    dropRegion.addEventListener('drop', (e) => {
-                        e.preventDefault(); dropRegion.style.borderColor = 'var(--border-primary)'; dropRegion.style.background = 'var(--bg-widget)';
-                        const f = e.dataTransfer.files[0];
-                        if (f && f.name.endsWith('.json')) performLocalFileExtraction(f); else renderOSNotification("ONLY .JSON STRUCTURES ACCEPTED");
+                    fileLoader.addEventListener('change', (e) => {
+                        const f = e.target.files[0];
+                        if (f) performLocalFileExtraction(f);
                     });
+
+                    dropRegion.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        dropRegion.style.borderColor = '#ffffff';
+                        dropRegion.style.background = '#121212';
+                    });
+
+                    dropRegion.addEventListener('dragleave', () => {
+                        dropRegion.style.borderColor = 'var(--border-primary)';
+                        dropRegion.style.background = 'var(--bg-widget)';
+                    });
+
+                    dropRegion.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        dropRegion.style.borderColor = 'var(--border-primary)';
+                        dropRegion.style.background = 'var(--bg-widget)';
+                        const f = e.dataTransfer.files[0];
+                        if (f && f.name.endsWith('.json')) {
+                            performLocalFileExtraction(f);
+                        } else {
+                            renderOSNotification("ONLY .JSON STRUCTURES ACCEPTED");
+                        }
+                    });
+
                     function performLocalFileExtraction(file) {
                         const reader = new FileReader();
-                        reader.onload = (event) => { if (loadV1Composition(event.target.result)) importModal.classList.remove('active'); };
+                        reader.onload = (event) => {
+                            if (loadV1Composition(event.target.result)) {
+                                importModal.classList.remove('active');
+                            }
+                        };
                         reader.readAsText(file);
                     }
 
                     document.getElementById('copyCompositionBtn').addEventListener('click', () => {
-                        document.getElementById('exportRawTextarea').select(); document.execCommand('copy');
+                        const rawComponent = document.getElementById('exportRawTextarea');
+                        rawComponent.select();
+                        document.execCommand('copy');
                         renderOSNotification("COMPOSITION COPIED TO SYSTEM CLIPBOARD");
                     });
+
                     document.getElementById('downloadCompositionBtn').addEventListener('click', () => {
-                        const blob = new Blob([parseCompositionToV1()], { type: 'application/json' });
-                        const url = URL.createObjectURL(blob); const a = document.createElement('a');
-                        a.href = url; a.download = 'nothing_matrix_pulse.json'; a.click(); URL.revokeObjectURL(url);
+                        const stream = parseCompositionToV1();
+                        const blobStream = new Blob([stream], { type: 'application/json' });
+                        const systemURL = URL.createObjectURL(blobStream);
+                        const anchor = document.createElement('a');
+                        anchor.href = systemURL;
+                        anchor.download = 'nothing_matrix_pulse_v1.json';
+                        anchor.click();
+                        URL.revokeObjectURL(systemURL);
                         renderOSNotification("JSON PAYLOAD EXPORTED");
                     });
 
-                    document.addEventListener('mouseup', () => isDrawing = false);
-                    document.addEventListener('dragstart', (e) => e.preventDefault());
+                    document.addEventListener('mouseup', () => {
+                        isDrawing = false;
+                    });
+
+                    document.addEventListener('dragstart', (e) => {
+                        e.preventDefault();
+                    });
                 }
 
                 applicationStart();
